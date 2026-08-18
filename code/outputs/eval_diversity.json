@@ -1,0 +1,87 @@
+{
+  "per_profile": [
+    {
+      "profile": "F26 sedentary, no restriction",
+      "ild": 0.8987012912530992,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "F34 lightly active, vegetarian",
+      "ild": 0.9262729386141738,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "F45 active, milk allergy",
+      "ild": 0.9531743369503258,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "F52 lightly active, low sodium",
+      "ild": 0.9293680693975305,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "F29 very active, gluten allergy",
+      "ild": 0.9315620656012178,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "F61 inactive, low sugar",
+      "ild": 0.9124106869627889,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "M22 very active, no restriction",
+      "ild": 0.8877165103353737,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "M31 lightly active, vegan",
+      "ild": 0.9519130663398755,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "M40 active, halal",
+      "ild": 0.9470374115881048,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "M55 inactive, peanut and tree nut allergy",
+      "ild": 0.9057439828669374,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "M47 lightly active, low sodium and low sugar",
+      "ild": 0.9172376588530408,
+      "distinct_mains": 21,
+      "n_meals": 21
+    },
+    {
+      "profile": "M35 active, vegetarian and egg allergy",
+      "ild": 0.9401718851270631,
+      "distinct_mains": 21,
+      "n_meals": 21
+    }
+  ],
+  "mean_ild": 0.925109158657461,
+  "coverage": {
+    "n_plans": 30,
+    "n_slots": 1349,
+    "distinct_recipes": 688,
+    "corpus_size": 141744,
+    "main_corpus_size": 128403,
+    "coverage_percent": 0.4853820973021786,
+    "top_recipe_share_percent": 1.0378057820607858,
+    "recipes_used_once": 411
+  }
+}

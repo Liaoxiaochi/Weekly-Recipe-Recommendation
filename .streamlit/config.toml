@@ -1,0 +1,15 @@
+# Interface theme.  The warm palette lives in code/uistyle.py, which explains
+# why it differs from code/figstyle.py (the dissertation's figure palette) and
+# which elements bridge the two.  Change uistyle.py first, then mirror here.
+[theme]
+primaryColor = "#B85C38"
+backgroundColor = "#F7F3EC"
+secondaryBackgroundColor = "#FFFDF9"
+textColor = "#3A322B"
+font = "sans serif"
+baseRadius = "0.75rem"
+borderColor = "#E3D9CA"
+showWidgetBorder = true
+
+[server]
+runOnSave = true

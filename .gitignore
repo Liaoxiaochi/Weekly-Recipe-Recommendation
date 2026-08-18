@@ -1,0 +1,20 @@
+# Credentials -- never commit, never submit.
+.streamlit/secrets.toml
+
+# Corpus data and everything derived from it.  The dataset is licensed
+# "Data files (c) Original Authors", i.e. no licence is granted, so it is used
+# under the research exemption and must not be redistributed with the code.
+data/
+code/outputs/*.pkl
+
+__pycache__/
+*.pyc
+
+# The dissertation itself and its intermediates.  The submitted deliverable is
+# the source code; the report goes to the SSO separately.
+*.docx
+_存档/
+
+# Large generated artefacts that any clone can regenerate.
+code/outputs/*.csv
+code/outputs/shoot_server.log

@@ -1,0 +1,69 @@
+{
+  "repeat_cap": [
+    {
+      "max_repeats": 1,
+      "ild": 0.9268791590537824,
+      "distinct_fraction": 1.0,
+      "mean_relevance": 0.9240437120058211
+    },
+    {
+      "max_repeats": 2,
+      "ild": 0.9268791590537824,
+      "distinct_fraction": 1.0,
+      "mean_relevance": 0.9240437120058211
+    },
+    {
+      "max_repeats": 3,
+      "ild": 0.9268791590537824,
+      "distinct_fraction": 1.0,
+      "mean_relevance": 0.9240437120058211
+    }
+  ],
+  "main_share": [
+    {
+      "main_share": 0.55,
+      "mean_energy_deviation": 6.542093964083307,
+      "worst_energy_deviation": 15.8751902587519
+    },
+    {
+      "main_share": 0.65,
+      "mean_energy_deviation": 6.244808504487215,
+      "worst_energy_deviation": 21.948583517292136
+    },
+    {
+      "main_share": 0.75,
+      "mean_energy_deviation": 5.98902318128273,
+      "worst_energy_deviation": 19.17540470934513
+    }
+  ],
+  "ceiling_emphasis": [
+    {
+      "ceiling_emphasis": 0.0,
+      "fat_g": 143.74408703878905,
+      "satfat_g": 192.13501676714736,
+      "sugar_g": 578.386605783866,
+      "sodium_mg": 152.5
+    },
+    {
+      "ceiling_emphasis": 1.0,
+      "fat_g": 142.20671712393568,
+      "satfat_g": 114.0126429861529,
+      "sugar_g": 193.08545335942594,
+      "sodium_mg": 121.5
+    },
+    {
+      "ceiling_emphasis": 2.0,
+      "fat_g": 129.74559686888455,
+      "satfat_g": 98.58518964479231,
+      "sugar_g": 120.16276592839391,
+      "sodium_mg": 90.0
+    },
+    {
+      "ceiling_emphasis": 4.0,
+      "fat_g": 115.68708609271523,
+      "satfat_g": 99.65564926375481,
+      "sugar_g": 103.23073982030203,
+      "sodium_mg": 99.0
+    }
+  ]
+}

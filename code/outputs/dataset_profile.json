@@ -1,0 +1,593 @@
+{
+  "n_recipes_raw": 231637,
+  "recipe_columns": [
+    "name",
+    "id",
+    "minutes",
+    "contributor_id",
+    "submitted",
+    "tags",
+    "nutrition",
+    "n_steps",
+    "steps",
+    "description",
+    "ingredients",
+    "n_ingredients"
+  ],
+  "n_recipes_missing_name": 1,
+  "n_recipes_missing_description": 4979,
+  "n_bad_nutrition_tuple": 0,
+  "nutrition_quantiles": {
+    "calories": {
+      "p1": 18.4,
+      "p5": 60.1,
+      "p25": 174.4,
+      "p50": 313.4,
+      "p75": 519.7,
+      "p95": 1268.72,
+      "p99": 3516.96
+    },
+    "total_fat_pdv": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 8.0,
+      "p50": 20.0,
+      "p75": 41.0,
+      "p95": 112.0,
+      "p99": 302.0
+    },
+    "sugar_pdv": {
+      "p1": 0.0,
+      "p5": 1.0,
+      "p25": 9.0,
+      "p50": 25.0,
+      "p75": 68.0,
+      "p95": 269.0,
+      "p99": 1141.64
+    },
+    "sodium_pdv": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 5.0,
+      "p50": 14.0,
+      "p75": 33.0,
+      "p95": 90.0,
+      "p99": 219.0
+    },
+    "protein_pdv": {
+      "p1": 0.0,
+      "p5": 1.0,
+      "p25": 7.0,
+      "p50": 18.0,
+      "p75": 51.0,
+      "p95": 107.0,
+      "p99": 188.0
+    },
+    "sat_fat_pdv": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 7.0,
+      "p50": 23.0,
+      "p75": 52.0,
+      "p95": 147.0,
+      "p99": 404.0
+    },
+    "carbs_pdv": {
+      "p1": 0.0,
+      "p5": 0.0,
+      "p25": 4.0,
+      "p50": 9.0,
+      "p75": 16.0,
+      "p95": 43.0,
+      "p99": 154.0
+    }
+  },
+  "n_calories_zero": 53,
+  "n_calories_over_5000": 1049,
+  "n_calories_over_2000": 6072,
+  "calories_max": 434360.2,
+  "calories_mean": 473.9,
+  "calories_median": 313.4,
+  "minutes_quantiles": {
+    "p1": 2.0,
+    "p5": 5.0,
+    "p25": 20.0,
+    "p50": 40.0,
+    "p75": 65.0,
+    "p95": 255.0,
+    "p99": 903.9
+  },
+  "n_minutes_zero": 1094,
+  "n_minutes_over_1440": 2000,
+  "minutes_max": 2147483647,
+  "n_ingredients_quantiles": {
+    "p1": 3.0,
+    "p5": 4.0,
+    "p25": 6.0,
+    "p50": 9.0,
+    "p75": 11.0,
+    "p95": 16.0,
+    "p99": 20.0
+  },
+  "n_ingredients_lt_2": 25,
+  "n_ingredients_mean": 9.05,
+  "n_steps_mean": 9.77,
+  "n_distinct_tags": 552,
+  "top_30_tags": [
+    [
+      "preparation",
+      230546
+    ],
+    [
+      "time-to-make",
+      225326
+    ],
+    [
+      "course",
+      218148
+    ],
+    [
+      "main-ingredient",
+      170446
+    ],
+    [
+      "dietary",
+      165091
+    ],
+    [
+      "easy",
+      126062
+    ],
+    [
+      "occasion",
+      114145
+    ],
+    [
+      "cuisine",
+      91165
+    ],
+    [
+      "low-in-something",
+      85776
+    ],
+    [
+      "main-dish",
+      71786
+    ],
+    [
+      "equipment",
+      70436
+    ],
+    [
+      "60-minutes-or-less",
+      69990
+    ],
+    [
+      "number-of-servings",
+      58949
+    ],
+    [
+      "meat",
+      56042
+    ],
+    [
+      "30-minutes-or-less",
+      55077
+    ],
+    [
+      "vegetables",
+      53814
+    ],
+    [
+      "taste-mood",
+      52143
+    ],
+    [
+      "4-hours-or-less",
+      49497
+    ],
+    [
+      "north-american",
+      48479
+    ],
+    [
+      "3-steps-or-less",
+      44933
+    ],
+    [
+      "15-minutes-or-less",
+      43934
+    ],
+    [
+      "low-sodium",
+      43349
+    ],
+    [
+      "desserts",
+      43203
+    ],
+    [
+      "low-carb",
+      42189
+    ],
+    [
+      "healthy",
+      40340
+    ],
+    [
+      "dinner-party",
+      37561
+    ],
+    [
+      "low-cholesterol",
+      36743
+    ],
+    [
+      "low-calorie",
+      36429
+    ],
+    [
+      "vegetarian",
+      35651
+    ],
+    [
+      "beginner-cook",
+      35561
+    ]
+  ],
+  "dietary_tag_counts": {
+    "vegetarian": 35651,
+    "vegan": 10012,
+    "dairy-free": 195,
+    "gluten-free": 5743,
+    "egg-free": 5064,
+    "nut-free": 218,
+    "low-sodium": 43349,
+    "low-cholesterol": 36743,
+    "low-carb": 42189,
+    "low-calorie": 36429,
+    "low-fat": 22170,
+    "diabetic": 6458,
+    "kosher": 4446,
+    "healthy": 40340
+  },
+  "meal_slot_coverage": {
+    "breakfast": 27309,
+    "lunch": 48907,
+    "dinner": 122269
+  },
+  "n_any_meal_slot": 156021,
+  "pct_any_meal_slot": 67.36,
+  "n_excluded_by_course_tag": 72704,
+  "n_slot_assignable_after_exclusion": 131448,
+  "pct_slot_assignable_after_exclusion": 56.75,
+  "ingr_map_rows": 11659,
+  "ingr_map_n_raw": 11659,
+  "ingr_map_n_canonical": 8023,
+  "n_distinct_ingredient_strings": 14942,
+  "n_distinct_ingredients_matched": 11683,
+  "pct_distinct_ingredients_matched": 78.19,
+  "pct_ingredient_occurrences_matched": 99.81,
+  "n_recipes_with_unmappable_ingredient": 3837,
+  "pct_recipes_with_unmappable_ingredient": 1.66,
+  "top_20_unmatched_ingredients": [
+    [
+      "fondant",
+      13
+    ],
+    [
+      "soho lychee liqueur",
+      6
+    ],
+    [
+      "black turtle beans",
+      6
+    ],
+    [
+      "lime-flavored vodka",
+      5
+    ],
+    [
+      "mint liqueur",
+      5
+    ],
+    [
+      "char siu pork",
+      5
+    ],
+    [
+      "blueberry-flavored syrup",
+      5
+    ],
+    [
+      "chocolate yogurt",
+      5
+    ],
+    [
+      "glitter",
+      5
+    ],
+    [
+      "dried lime powder",
+      5
+    ],
+    [
+      "wheat starch",
+      5
+    ],
+    [
+      "beef stew",
+      4
+    ],
+    [
+      "creme de almond",
+      4
+    ],
+    [
+      "chai concentrate",
+      4
+    ],
+    [
+      "watermelon vodka",
+      4
+    ],
+    [
+      "marinated roasted red peppers",
+      4
+    ],
+    [
+      "chinese chives",
+      4
+    ],
+    [
+      "ox kidney",
+      4
+    ],
+    [
+      "cherry schnapps",
+      4
+    ],
+    [
+      "durum flour",
+      4
+    ]
+  ],
+  "allergen_hits": {
+    "gluten": 121830,
+    "crustaceans": 6938,
+    "eggs": 74751,
+    "fish": 17911,
+    "peanuts": 7530,
+    "soybeans": 40724,
+    "milk": 144197,
+    "tree_nuts": 31647,
+    "celery": 35151,
+    "mustard": 31829,
+    "sesame": 15278,
+    "sulphites": 41737,
+    "lupin": 0,
+    "molluscs": 2861
+  },
+  "allergen_layer_breakdown": {
+    "gluten": {
+      "direct": 8273,
+      "derived": 10618,
+      "composite": 102939
+    },
+    "crustaceans": {
+      "direct": 6641,
+      "derived": 1,
+      "composite": 296
+    },
+    "eggs": {
+      "direct": 55678,
+      "derived": 30,
+      "composite": 19043
+    },
+    "fish": {
+      "direct": 7768,
+      "derived": 70,
+      "composite": 10073
+    },
+    "peanuts": {
+      "direct": 7505,
+      "derived": 0,
+      "composite": 25
+    },
+    "soybeans": {
+      "direct": 2030,
+      "derived": 699,
+      "composite": 37995
+    },
+    "milk": {
+      "direct": 83331,
+      "derived": 5094,
+      "composite": 55772
+    },
+    "tree_nuts": {
+      "direct": 24844,
+      "derived": 5481,
+      "composite": 1322
+    },
+    "celery": {
+      "direct": 10711,
+      "derived": 1998,
+      "composite": 22442
+    },
+    "mustard": {
+      "direct": 11288,
+      "derived": 1610,
+      "composite": 18931
+    },
+    "sesame": {
+      "direct": 5910,
+      "derived": 8129,
+      "composite": 1239
+    },
+    "sulphites": {
+      "direct": 0,
+      "derived": 0,
+      "composite": 41737
+    },
+    "lupin": {
+      "direct": 0,
+      "derived": 0,
+      "composite": 0
+    },
+    "molluscs": {
+      "direct": 1767,
+      "derived": 11,
+      "composite": 1083
+    }
+  },
+  "n_recipes_no_allergen_flag": 19645,
+  "pct_recipes_no_allergen_flag": 8.48,
+  "rule_tag_contradictions": {
+    "gluten": {
+      "n_conflict": 1077,
+      "n_tag_says_free": 5743
+    },
+    "milk": {
+      "n_conflict": 926,
+      "n_tag_says_free": 10173
+    },
+    "eggs": {
+      "n_conflict": 490,
+      "n_tag_says_free": 14124
+    },
+    "tree_nuts": {
+      "n_conflict": 7,
+      "n_tag_says_free": 218
+    },
+    "peanuts": {
+      "n_conflict": 0,
+      "n_tag_says_free": 218
+    }
+  },
+  "cleaning_rules": {
+    "missing name": {
+      "n_matched": 1,
+      "n_newly_dropped": 1
+    },
+    "nutrition tuple malformed": {
+      "n_matched": 0,
+      "n_newly_dropped": 0
+    },
+    "calories == 0": {
+      "n_matched": 53,
+      "n_newly_dropped": 53
+    },
+    "calories > 2000": {
+      "n_matched": 6072,
+      "n_newly_dropped": 6072
+    },
+    "minutes == 0": {
+      "n_matched": 1094,
+      "n_newly_dropped": 974
+    },
+    "minutes > 1440 (24h)": {
+      "n_matched": 2000,
+      "n_newly_dropped": 1854
+    },
+    "fewer than 2 ingredients": {
+      "n_matched": 25,
+      "n_newly_dropped": 23
+    },
+    "no steps": {
+      "n_matched": 1,
+      "n_newly_dropped": 1
+    },
+    "not assignable to a meal slot": {
+      "n_matched": 100189,
+      "n_newly_dropped": 94256
+    }
+  },
+  "n_recipes_after_cleaning": 128403,
+  "pct_recipes_retained": 55.43,
+  "clean_calories_mean": 418.0,
+  "clean_calories_median": 354.3,
+  "clean_minutes_median": 40.0,
+  "clean_meal_slot_counts": {
+    "breakfast": 19919,
+    "lunch": 40779,
+    "dinner": 103389
+  },
+  "n_interactions_raw": 1132367,
+  "n_users_raw": 226570,
+  "n_recipes_rated_raw": 231637,
+  "rating_distribution": {
+    "0": 60847,
+    "1": 12818,
+    "2": 14123,
+    "3": 40855,
+    "4": 187360,
+    "5": 816364
+  },
+  "rating_mean": 4.411,
+  "pct_rating_5": 72.09,
+  "pct_rating_0": 5.37,
+  "matrix_density_pct": 0.002158,
+  "matrix_sparsity_pct": 99.997842,
+  "per_user_quantiles": {
+    "p10": 1.0,
+    "p25": 1.0,
+    "p50": 1.0,
+    "p75": 2.0,
+    "p90": 5.0,
+    "p95": 11.0,
+    "p99": 61.0
+  },
+  "per_user_mean": 5.0,
+  "per_user_median": 1,
+  "users_with_at_least": {
+    "1": {
+      "n_users": 226570,
+      "pct": 100.0
+    },
+    "2": {
+      "n_users": 60314,
+      "pct": 26.62
+    },
+    "3": {
+      "n_users": 37576,
+      "pct": 16.58
+    },
+    "5": {
+      "n_users": 23086,
+      "pct": 10.19
+    },
+    "10": {
+      "n_users": 12486,
+      "pct": 5.51
+    },
+    "15": {
+      "n_users": 8661,
+      "pct": 3.82
+    },
+    "20": {
+      "n_users": 6687,
+      "pct": 2.95
+    },
+    "25": {
+      "n_users": 5429,
+      "pct": 2.4
+    },
+    "30": {
+      "n_users": 4547,
+      "pct": 2.01
+    },
+    "50": {
+      "n_users": 2755,
+      "pct": 1.22
+    },
+    "100": {
+      "n_users": 1382,
+      "pct": 0.61
+    }
+  },
+  "per_item_median": 2,
+  "per_item_mean": 4.89,
+  "pct_items_with_lt_5_ratings": 76.86,
+  "n_interactions_on_clean_corpus": 655954,
+  "pct_interactions_retained": 57.93
+}

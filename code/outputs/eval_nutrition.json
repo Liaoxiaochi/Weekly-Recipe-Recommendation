@@ -1,0 +1,150 @@
+{
+  "profiles": [
+    {
+      "profile": "F26 sedentary, no restriction",
+      "unfilled": 0,
+      "energy_kcal": 92.8811363964435,
+      "protein_g": 106.48604269293925,
+      "carbs_g": 92.69699085904675,
+      "fat_g": 101.79112746226386,
+      "satfat_g": 99.65564926375481,
+      "sugar_g": 103.23073982030203,
+      "sodium_mg": 84.0,
+      "days_all_ceilings_met": 4
+    },
+    {
+      "profile": "F34 lightly active, vegetarian",
+      "unfilled": 0,
+      "energy_kcal": 90.96762325239148,
+      "protein_g": 101.04166666666666,
+      "carbs_g": 90.42888678650267,
+      "fat_g": 115.68708609271523,
+      "satfat_g": 89.17820590006022,
+      "sugar_g": 89.67991169977924,
+      "sodium_mg": 90.0,
+      "days_all_ceilings_met": 4
+    },
+    {
+      "profile": "F45 active, milk allergy",
+      "unfilled": 0,
+      "energy_kcal": 92.95281582952815,
+      "protein_g": 105.78231292517007,
+      "carbs_g": 90.13139502376292,
+      "fat_g": 100.30752026838135,
+      "satfat_g": 62.62230919765165,
+      "sugar_g": 99.58686671015437,
+      "sodium_mg": 99.0,
+      "days_all_ceilings_met": 6
+    },
+    {
+      "profile": "F52 lightly active, low sodium",
+      "unfilled": 0,
+      "energy_kcal": 97.03004866530364,
+      "protein_g": 100.42016806722688,
+      "carbs_g": 100.12382296196044,
+      "fat_g": 101.91637630662024,
+      "satfat_g": 96.47981528650747,
+      "sugar_g": 100.28220116911912,
+      "sodium_mg": 83.0,
+      "days_all_ceilings_met": 4
+    },
+    {
+      "profile": "F29 very active, gluten allergy",
+      "unfilled": 0,
+      "energy_kcal": 95.71201221195538,
+      "protein_g": 101.92012288786482,
+      "carbs_g": 99.25461602169571,
+      "fat_g": 101.33324672372075,
+      "satfat_g": 101.99758182024867,
+      "sugar_g": 95.10818081921866,
+      "sodium_mg": 97.0,
+      "days_all_ceilings_met": 2
+    },
+    {
+      "profile": "F61 inactive, low sugar",
+      "unfilled": 0,
+      "energy_kcal": 98.56713079834265,
+      "protein_g": 102.77777777777779,
+      "carbs_g": 97.63872835987802,
+      "fat_g": 106.91440755406643,
+      "satfat_g": 97.98012251498247,
+      "sugar_g": 106.90188976837923,
+      "sodium_mg": 101.5,
+      "days_all_ceilings_met": 1
+    },
+    {
+      "profile": "M22 very active, no restriction",
+      "unfilled": 0,
+      "energy_kcal": 76.31568460901208,
+      "protein_g": 112.34335839598997,
+      "carbs_g": 76.6099348790386,
+      "fat_g": 95.4541164627049,
+      "satfat_g": 87.92616764429141,
+      "sugar_g": 101.29927328782205,
+      "sodium_mg": 96.5,
+      "days_all_ceilings_met": 6
+    },
+    {
+      "profile": "M31 lightly active, vegan",
+      "unfilled": 0,
+      "energy_kcal": 90.42046605876394,
+      "protein_g": 103.39285714285714,
+      "carbs_g": 94.40729483282675,
+      "fat_g": 101.64893617021278,
+      "satfat_g": 45.26112185686654,
+      "sugar_g": 100.0,
+      "sodium_mg": 97.5,
+      "days_all_ceilings_met": 6
+    },
+    {
+      "profile": "M40 active, halal",
+      "unfilled": 0,
+      "energy_kcal": 91.28829630494086,
+      "protein_g": 110.70028011204481,
+      "carbs_g": 91.41923531385392,
+      "fat_g": 118.79038963691266,
+      "satfat_g": 101.32655050453478,
+      "sugar_g": 105.54477688144593,
+      "sodium_mg": 88.0,
+      "days_all_ceilings_met": 3
+    },
+    {
+      "profile": "M55 inactive, peanut and tree nut allergy",
+      "unfilled": 0,
+      "energy_kcal": 96.74765622644921,
+      "protein_g": 103.91534391534391,
+      "carbs_g": 94.92056793175173,
+      "fat_g": 102.63467277605281,
+      "satfat_g": 101.51738955284007,
+      "sugar_g": 101.70922135471618,
+      "sodium_mg": 83.50000000000001,
+      "days_all_ceilings_met": 4
+    },
+    {
+      "profile": "M47 lightly active, low sodium and low sugar",
+      "unfilled": 0,
+      "energy_kcal": 90.30885311871228,
+      "protein_g": 105.84415584415585,
+      "carbs_g": 90.18108651911469,
+      "fat_g": 113.58651911468813,
+      "satfat_g": 92.47759282970551,
+      "sugar_g": 88.73239436619718,
+      "sodium_mg": 81.0,
+      "days_all_ceilings_met": 6
+    },
+    {
+      "profile": "M35 active, vegetarian and egg allergy",
+      "unfilled": 0,
+      "energy_kcal": 93.20591470120982,
+      "protein_g": 102.31660231660233,
+      "carbs_g": 100.71611878284249,
+      "fat_g": 101.51533667359159,
+      "satfat_g": 99.94556341861731,
+      "sugar_g": 93.41317365269461,
+      "sodium_mg": 101.5,
+      "days_all_ceilings_met": 3
+    }
+  ],
+  "mean_energy_attainment": 92.19980318108774,
+  "profiles_with_gaps": 0
+}

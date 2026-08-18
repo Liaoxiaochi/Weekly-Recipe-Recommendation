@@ -1,0 +1,11 @@
+{
+  "rmse": {
+    "matrix factorisation": 1.1826321684682934,
+    "global mean": 1.2306075693900727,
+    "user mean": 1.221683815963272,
+    "item mean": 1.2816001509841557
+  },
+  "n_validation": 65596,
+  "n_train": 590358,
+  "n_factors": 20
+}

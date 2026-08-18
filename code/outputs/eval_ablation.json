@@ -1,0 +1,378 @@
+{
+  "n_profiles": 12,
+  "mean": {
+    "popularity, unfiltered": {
+      "allergen_violations": 3.6666666666666665,
+      "regime_violations": 5.416666666666667,
+      "over_time_meals": 12.0,
+      "energy_attainment": 58.075681010925315,
+      "days_all_ceilings_met": 1.0833333333333333,
+      "distinct_mains": 20.0
+    },
+    "popularity + hard filter": {
+      "allergen_violations": 0.0,
+      "regime_violations": 0.0,
+      "over_time_meals": 11.916666666666666,
+      "energy_attainment": 53.95182250951823,
+      "days_all_ceilings_met": 2.5833333333333335,
+      "distinct_mains": 18.916666666666668
+    },
+    "full system": {
+      "allergen_violations": 0.0,
+      "regime_violations": 0.0,
+      "over_time_meals": 18.166666666666668,
+      "energy_attainment": 92.19980318108774,
+      "days_all_ceilings_met": 4.083333333333333,
+      "distinct_mains": 21.0
+    }
+  },
+  "totals_over_all_profiles": {
+    "popularity, unfiltered": {
+      "allergen_violations": 44,
+      "regime_violations": 65,
+      "over_time_meals": 144
+    },
+    "popularity + hard filter": {
+      "allergen_violations": 0,
+      "regime_violations": 0,
+      "over_time_meals": 143
+    },
+    "full system": {
+      "allergen_violations": 0,
+      "regime_violations": 0,
+      "over_time_meals": 218
+    }
+  },
+  "per_profile": {
+    "popularity, unfiltered": [
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 76.14027832505589,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 20,
+        "over_time_meals": 12,
+        "energy_attainment": 64.11029643645537,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 17,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 60.62249557357189,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 70.24865378523916,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 16,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 52.821578784975394,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 81.43320300927569,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 40.93119828860855,
+        "days_all_ceilings_met": 2,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 20,
+        "over_time_meals": 12,
+        "energy_attainment": 49.43313069908816,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 5,
+        "over_time_meals": 12,
+        "energy_attainment": 45.55137051246517,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 1,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 58.83157989931571,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 49.08501006036217,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 10,
+        "regime_violations": 20,
+        "over_time_meals": 12,
+        "energy_attainment": 47.699376756690704,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      }
+    ],
+    "popularity + hard filter": [
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 76.14027832505589,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 50.029564806054864,
+        "days_all_ceilings_met": 5,
+        "distinct_mains": 16
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 13,
+        "energy_attainment": 51.60376479358867,
+        "days_all_ceilings_met": 2,
+        "distinct_mains": 19
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 70.24865378523916,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 13,
+        "energy_attainment": 39.673156974509716,
+        "days_all_ceilings_met": 5,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 81.43320300927569,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 40.93119828860855,
+        "days_all_ceilings_met": 2,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 11,
+        "energy_attainment": 40.955927051671736,
+        "days_all_ceilings_met": 4,
+        "distinct_mains": 16
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 11,
+        "energy_attainment": 37.82573558372599,
+        "days_all_ceilings_met": 3,
+        "distinct_mains": 19
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 60.021101498206384,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 12,
+        "energy_attainment": 49.08501006036217,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 20
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 11,
+        "energy_attainment": 49.47427593792008,
+        "days_all_ceilings_met": 5,
+        "distinct_mains": 17
+      }
+    ],
+    "full system": [
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 17,
+        "energy_attainment": 92.8811363964435,
+        "days_all_ceilings_met": 4,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 17,
+        "energy_attainment": 90.96762325239148,
+        "days_all_ceilings_met": 4,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 18,
+        "energy_attainment": 92.95281582952815,
+        "days_all_ceilings_met": 6,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 17,
+        "energy_attainment": 97.03004866530364,
+        "days_all_ceilings_met": 4,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 18,
+        "energy_attainment": 95.71201221195538,
+        "days_all_ceilings_met": 2,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 18,
+        "energy_attainment": 98.56713079834265,
+        "days_all_ceilings_met": 1,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 19,
+        "energy_attainment": 76.31568460901208,
+        "days_all_ceilings_met": 6,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 17,
+        "energy_attainment": 90.42046605876394,
+        "days_all_ceilings_met": 6,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 21,
+        "energy_attainment": 91.28829630494086,
+        "days_all_ceilings_met": 3,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 21,
+        "energy_attainment": 96.74765622644921,
+        "days_all_ceilings_met": 4,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 17,
+        "energy_attainment": 90.30885311871228,
+        "days_all_ceilings_met": 6,
+        "distinct_mains": 21
+      },
+      {
+        "meals": 21,
+        "allergen_violations": 0,
+        "regime_violations": 0,
+        "over_time_meals": 18,
+        "energy_attainment": 93.20591470120982,
+        "days_all_ceilings_met": 3,
+        "distinct_mains": 21
+      }
+    ]
+  }
+}
