@@ -140,5 +140,15 @@ DELIVERABLES = [
      "Report", "SSO (31/08/2026)"],
     ["Software prototype and the pipeline that rebuilds the corpus "
      "(D2 and D3)",
-     "Software codes or URL", "Supervisor, assessor (31/08/2026)"],
+     "URL: https://github.com/Liaoxiaochi/Weekly-Recipe-Recommendation",
+     "Provided in this report (31/08/2026)"],
 ]
+
+# WHY THE SOFTWARE ROW NAMES A URL RATHER THAN A RECIPIENT.  The template offers
+# "Software codes or URL" as the format, and the code is published at the
+# address above.  The recipient column had read "Supervisor, assessor", which
+# described a hand-over that did not take place: neither replied in time for the
+# archive to be sent to them.  A signed declaration must not assert a delivery
+# that did not happen, so the row now states where the software actually is.
+# The repository excludes the corpus and the credentials file for the reasons
+# Appendix A gives.
