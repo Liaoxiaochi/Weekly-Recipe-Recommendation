@@ -33,40 +33,44 @@ BLOCKS = [
 # ===========================================================================
 ("h1", "Chapter 4 Implementation"),
 
-("p", "This chapter reports the construction of the system specified in "
-      "Chapter 3. It follows the order in which the components were built, "
-      "and for each one it states what was implemented, what the "
-      "implementation revealed, and what had to change as a result. Several "
-      "of the design decisions in Chapter 3 exist because an earlier version "
-      "of them failed here, and where that is so it is said explicitly, "
-      "because the reasoning is more informative than the conclusion."),
-
 # ---------------------------------------------------------------------------
 ("h2", "4.1  Development environment"),
 
 ("p", "The system is written in Python 3.11 and runs on a single laptop with "
-      "no specialised hardware. Data preparation uses pandas and NumPy, the "
-      "term-weighting and vectorisation components use scikit-learn, and the "
-      "interface uses Streamlit. Two libraries that a recommender project of "
-      "this kind would ordinarily reach for, Surprise and implicit, were "
-      "considered and rejected. Both require a C toolchain at installation "
-      "time, which on Windows is an appreciable risk of losing a day to an "
-      "environment failure rather than to the project. Since Section 3.4.2 "
-      "specifies truncated matrix factorisation trained by stochastic "
-      "gradient descent, and that is roughly sixty lines of NumPy, the "
-      "dependency bought nothing that could not be written directly. The "
-      "consequence is that the only package requiring installation beyond a "
-      "standard scientific distribution is Streamlit itself."),
+      "no specialised hardware, using pandas and NumPy for data "
+      "preparation, scikit-learn for term weighting and vectorisation, and "
+      "Streamlit for the interface. Two libraries a recommender project "
+      "would ordinarily reach for, Surprise and implicit, were rejected: "
+      "both need a C toolchain at installation time, which on Windows risks "
+      "losing a day to an environment failure rather than to the project, "
+      "and since Section 3.4.2 specifies a truncated factorisation trained "
+      "by stochastic gradient descent, which is roughly sixty lines of "
+      "NumPy, the dependency bought nothing. The only package needing installation "
+      "beyond a standard scientific distribution is Streamlit itself."),
 
 ("p", "The two expensive artefacts, the term-document matrix and the latent "
-      "factor matrices, are computed once by scripts run offline and stored "
-      "on disk. The interface loads them at start-up, so serving a request "
-      "costs a filter over the candidate set and a scoring pass rather than "
-      "any retraining. Recipe methods and descriptions are stored separately "
-      "from the corpus rather than inside it: the planner never reads them, "
-      "and carrying roughly eighty-five megabytes of prose through every "
-      "scoring pass would cost load time for nothing. The interface reads "
-      "that file only when a user opens a recipe."),
+      "factor matrices, are computed once offline and stored on disk. The "
+      "interface loads them at start-up, so serving a request costs a filter "
+      "over the candidate set and a scoring pass rather than any "
+      "retraining. Recipe methods and descriptions are stored separately: "
+      "the planner never reads them, and carrying eighty-five megabytes of "
+      "prose through every scoring pass would cost load time for nothing. "
+      "The interface reads that file only when a user opens a recipe."),
+
+("p", "The source is kept in a Git repository laid out along the module "
+      "decomposition of Section 3.7.1: the five modules in a source "
+      "package, the interface and the supporting scripts above it, and the "
+      "precomputed artefacts in a directory of their own. What is excluded "
+      "from that repository matters as much as what is tracked, and the "
+      "exclusions are a control rather than housekeeping. The recipe "
+      "corpus and every "
+      "artefact derived from it are excluded, because the dataset grants "
+      "no redistribution licence, as Appendix A sets out; the credentials "
+      "file for the external service of Section 4.6 is excluded for the "
+      "obvious reason. The submitted archive is therefore built by a "
+      "script rather than by compressing the working directory, and that "
+      "script refuses to write an archive containing either. Each change "
+      "is checked by the suites of Section 4.7 before it is kept."),
 
 # ---------------------------------------------------------------------------
 ("h2", "4.2  Data pipeline"),
@@ -80,36 +84,33 @@ BLOCKS = [
       "in a chapter written before the code existed, and a silent divergence "
       "between the two would not have been noticed by reading either."),
 
-("p", "The conversion of the nutrition tuple from percentages to masses was "
-      "checked independently of the single published panel used to establish "
-      "the reference values. If the conversion is correct, reconstructing "
-      "energy from the converted macronutrients using the Atwater factors of "
-      "4 kcal per gram of protein and carbohydrate and 9 kcal per gram of fat "
-      "should reproduce the recorded energy. Across the 225,512 recipes with "
-      "a usable energy value the reconstruction has a median absolute "
-      "relative error of 2.86 per cent, with 71.1 per cent of recipes within "
-      "5 per cent. The reference values introduced by the 2016 revision of "
-      "the labelling rules agree markedly less well, a carbohydrate reference "
-      "of 275 g raising the median error to 5.34 per cent and a fat reference "
-      "of 78 g to 7.29 per cent. The pre-2016 values were adopted on that "
-      "evidence rather than on the collection date alone."),
+("p", "The conversion from percentages to masses was checked independently of "
+      "the published panel used to establish the reference values. If it is "
+      "correct, reconstructing energy from the converted macronutrients by "
+      "the Atwater factors of 4 kcal per gram of protein and carbohydrate "
+      "and 9 for fat should reproduce the recorded energy. Across the 225,512 "
+      "recipes with a usable energy value the reconstruction has a median "
+      "absolute relative error of 2.86 per cent, with 71.1 per cent within 5 "
+      "per cent. The values introduced by the 2016 revision agree markedly "
+      "less well: a carbohydrate reference of 275 g raises the median error "
+      "to 5.34 per cent and a fat reference of 78 g to 7.29. The pre-2016 "
+      "values were adopted on that evidence rather than on the collection "
+      "date alone."),
 
-("p", "Allergen tagging produced the most consequential implementation "
-      "finding in the pipeline, and it contradicted the design. Chapter 3 "
-      "originally specified that matching should run on ingredient strings "
-      "after normalisation through the ingredient map supplied with the "
-      "corpus. Implementing it that way destroys the composite layer. The map "
-      "resolves multi-word entries to a short canonical head word, so "
-      "Worcestershire sauce becomes sauce -- and the composite layer exists "
-      "precisely because complete multi-word phrases are the only evidence "
-      "the allergen is present. Of the 121,830 recipes flagged for gluten, "
-      "102,939 are flagged only by a composite rule, and every one of the "
-      "41,737 sulphite flags is. Matching after normalisation would have lost "
-      "most of them. Matching therefore runs on the raw strings, and Section "
-      "3.2.4 was corrected to say so. The map remains in use for what it is "
-      "good at: supplying the content-based vocabulary, and identifying the "
-      "1.47 per cent of the cleaned corpus whose ingredients it cannot "
-      "resolve, which is the residue the fail-closed rule excludes."),
+("p", "Allergen tagging produced the most consequential finding in the "
+      "pipeline, and it contradicted the design. Chapter 3 originally "
+      "specified that matching run on ingredient strings after normalisation "
+      "through the ingredient map. Implementing it that way destroys the "
+      "composite layer: the map resolves multi-word entries to a canonical "
+      "head word, so Worcestershire sauce becomes sauce, while the composite "
+      "layer exists precisely because the complete phrase is the only "
+      "evidence the allergen is present. Of the 121,830 recipes flagged for "
+      "gluten, 102,939 are flagged only by a composite rule, as are all "
+      "41,737 sulphite flags. Matching therefore runs on the raw strings, and "
+      "Section 3.2.4 was corrected to say so. The map remains in use for what "
+      "it is good at: supplying the content-based vocabulary, and identifying "
+      "the 1.47 per cent of the corpus whose ingredients it cannot resolve, "
+      "the residue the fail-closed rule excludes."),
 
 ("p", "The rate at which the lexicon misses allergens genuinely present was "
       "measured rather than assumed. A sample of 160 recipes was labelled by "
@@ -133,7 +134,7 @@ BLOCKS = [
       "slot's share of those targets is computed."),
 
 ("p", "The first implementation gave each slot a fixed share of the daily "
-      "figures -- twenty-five, thirty-five and forty per cent -- regardless "
+      "figures, twenty-five, thirty-five and forty per cent, regardless "
       "of what the earlier meals of the day had actually supplied. Under that "
       "arrangement an excess at breakfast is never recovered, because lunch "
       "and dinner are scored against a target that does not know about it, so "
@@ -180,8 +181,7 @@ BLOCKS = [
       "found it indistinguishable from random, and it is the only change to "
       "the recommender that the evaluation itself prompted."),
 
-("p", "One defect in this component is worth reporting because of how late it "
-      "surfaced. The profile vector was formed by weighting each rated "
+("p", "One defect in this component surfaced very late. The profile vector was formed by weighting each rated "
       "recipe's vector by its rating, which is wrong in a way that is "
       "invisible until negative ratings exist: a one-star rating multiplies "
       "the disliked recipe's vector by one and adds it, moving the profile "
@@ -211,75 +211,67 @@ BLOCKS = [
       "which is knowable only once the slot is known."),
 
 ("p", "Adaptive relaxation, specified in Section 3.5.3, could not fire as "
-      "first implemented. The relaxation step in Algorithm 3.1 is reached "
+      "first implemented. The relaxation step of Section 3.6.2 is reached "
       "when no candidate is admissible, but after hard filtering the score is "
       "an argmax over a non-empty set, which always returns a winner. The "
       "step was therefore unreachable code that the chapter described as a "
-      "feature. The resolution was to give the soft constraints admissibility "
-      "gates -- a slot rejects a candidate whose energy or nutritional error "
-      "exceeds a tolerance -- so that a genuinely poor fit leaves the "
-      "admissible set empty and relaxation has something to relax. Hard "
+      "feature. The resolution was to give the soft constraints "
+      "admissibility gates, so that a slot rejects a candidate whose "
+      "energy or nutritional error exceeds a tolerance. A genuinely poor "
+      "fit then leaves the admissible set empty and relaxation has "
+      "something to relax. Hard "
       "constraints take no part in this: they read none of the relaxation "
       "parameters, so the guarantee that relaxation cannot reach an allergen "
       "rule is structural rather than a matter of the order in which the "
       "rules were written."),
 
-("p", "The energy tolerance was set by measurement rather than by choice. "
-      "Sweeping it across four profiles gave worst-day energy deviations of "
-      "12 to 20 per cent at a tolerance of 0.50, 11 to 18 per cent at 0.35, 5 "
-      "to 18 per cent at 0.25 and 8 to 9 per cent at 0.15, with all "
+("p", "The energy tolerance was set by measurement. Sweeping it across four "
+      "profiles gave worst-day energy deviations of 12 to 20 per cent at 0.50, "
+      "11 to 18 at 0.35, 5 to 18 at 0.25 and 8 to 9 at 0.15, with all "
       "twenty-one slots filled at every setting; 0.15 was adopted. The "
-      "scoring weights were deliberately left alone during this exercise. "
-      "Section 3.5.2 states that they are initial values to be tuned on a "
-      "validation split in Chapter 5, and adjusting them to make a smoke test "
-      "pass would have pre-empted that experiment. A tolerance decides which "
-      "candidates are eligible for a slot; a weight decides how the eligible "
-      "ones are ranked. They are not interchangeable."),
+      "scoring weights were deliberately left alone: Section 3.5.2 states "
+      "they are initial values to be tuned in Chapter 5, and adjusting them "
+      "to make a smoke test pass would have pre-empted that experiment. A "
+      "tolerance decides which candidates are eligible for a slot; a weight "
+      "decides how the eligible ones are ranked."),
 
 ("p", "The nutritional term needed the most correction, and the defect was "
-      "found by reading the interface rather than by any test. Energy "
-      "was within about one per cent of target every day, which looked like "
+      "found by reading the interface rather than by any test. Energy was "
+      "within about one per cent of target every day, which looked like "
       "success until the other nutrients were examined: sodium stood at 245 "
-      "to 390 per cent of its ceiling, free sugars at 208 to 473 per cent and "
-      "fat at 126 to 171 per cent. Three causes compounded. The term covered "
-      "only protein, fat and carbohydrate and treated fat as a target to "
-      "reach rather than a ceiling not to exceed, leaving sodium, sugars and "
-      "saturated fat out of the scoring function altogether; accompaniments "
-      "were chosen on energy alone; and each slot was scored independently, "
-      "so an early excess was never recovered. The term now separates "
-      "quantities to reach from ceilings not to exceed and averages the two "
-      "groups separately before combining them, pooling having allowed one "
-      "violated ceiling to be diluted by three satisfied ones, from a penalty "
-      "of 1.0 to 0.17. The weight given to exceedance was then set by "
-      "measurement rather than by judgement, and Section 5.7 reports that "
-      "sweep beside the other parameters, since it is the same kind of "
-      "experiment."),
+      "to 390 per cent of its ceiling, free sugars at 208 to 473 and fat at "
+      "126 to 171. Three causes compounded: the term covered only protein, "
+      "fat and carbohydrate and treated fat as a target rather than a "
+      "ceiling, leaving sodium, sugars and saturated fat unscored; "
+      "accompaniments were chosen on energy alone; and each slot was "
+      "scored independently, so an early excess was never recovered. The "
+      "term now separates quantities to reach from ceilings not to exceed "
+      "and averages the two groups separately, pooling having allowed one "
+      "violated ceiling to be diluted by three satisfied ones, from a "
+      "penalty of 1.0 to 0.17. The weight given to exceedance was then set "
+      "by measurement, reported in Section 5.7."),
 
-("p", "The correction is paid for in energy, which now sits a little below "
-      "target rather than exactly on it: Section 5.5 measures a mean daily "
-      "attainment of 95 to 99 per cent across twelve profiles. That is the "
-      "right direction for the error to fall. The deviation is an undershoot "
-      "in every case, and for a tool whose purpose is nutritional balance, "
-      "falling a few per cent short of an energy target while holding four "
-      "guideline ceilings is a more defensible failure than meeting the "
-      "energy target by exceeding the ceiling for salt fourfold."),
+("p", "The correction is paid for in energy, which now sits below target "
+      "rather than on it: Section 5.5 measures a mean daily attainment of 92 "
+      "per cent across twelve profiles, and an undershoot in every one of "
+      "them. That is the right direction for the error to fall. For a tool "
+      "whose purpose is nutritional balance, falling short of an energy "
+      "target while holding four guideline ceilings is a more defensible "
+      "failure than meeting the energy target by exceeding the ceiling for "
+      "salt fourfold."),
 
-("p", "The user's exclusion list is matched by a rule rewritten after it was "
-      "noticed that excluding oats produced a plan containing oatmeal. "
-      "Testing whether the typed term occurs as a substring of the ingredient "
-      "text is wrong in both directions at once, as Table 4.1 shows: too "
-      "permissive, because oat occurs inside goat, and too strict, because "
-      "oats does not occur inside oatmeal. Matching is now anchored at a word "
-      "boundary and applied to the term's stem. The residual error is "
-      "over-exclusion, since a stem also prefixes unrelated foods: excluding "
-      "peas removes peaches. For a preference list that is the tolerable "
-      "direction, the cost of removing too much being lost variety and of "
-      "removing too little being a meal the user has said they do not want. "
-      "It is tolerable only because it is visible: Figure 4.5 shows the "
-      "interface naming what each term matched, so an over-broad term can be "
-      "reworded. None of this applies to declared allergens, which are "
-      "matched by the lexicon of Section 3.2.4; that mechanism was tested "
-      "against the same case and flags every oat form as gluten."),
+("p", "The exclusion list is matched by a rule rewritten after excluding oats "
+      "produced a plan containing oatmeal. Testing whether the typed term "
+      "occurs as a substring of the ingredient text is wrong in both "
+      "directions at once, as Table 4.1 shows: too permissive, because oat "
+      "occurs inside goat, and too strict, because oats does not occur "
+      "inside oatmeal. Matching is now anchored at a word boundary and "
+      "applied to the term's stem. The residual error is over-exclusion, "
+      "since a stem also prefixes unrelated foods: excluding peas removes "
+      "peaches. For a preference list that is the tolerable direction, and "
+      "it is tolerable only because it is visible: the interface lists the "
+      "ingredients each term matched, so an over-broad term can be reworded. None of this applies to declared allergens, matched by the "
+      "lexicon of Section 3.2.4, which flags every oat form as gluten."),
 
 ("tablecaption", "Table 4.1  Behaviour of the exclusion rule before and after "
                  "revision. Survivors are recipes remaining in the cleaned "
@@ -297,124 +289,106 @@ BLOCKS = [
 # ---------------------------------------------------------------------------
 ("h2", "4.6  Weekly planner and interface"),
 
-("p", "The planner fills slots in the order given by Algorithm 3.1. Its first "
-      "implementation followed Section 3.6.1 as originally written, filling "
-      "each slot with a single recipe, and every one of the four test "
-      "profiles came out 35 to 45 per cent below its daily energy target. The "
-      "cause was not in the code. A serving in this corpus is much smaller "
-      "than a meal: the median dinner candidate supplies 381 kcal where the "
-      "dinner slot of a 2,440 kcal day asks for 976, and only 5.5 per cent of "
-      "dinner candidates reach that figure in a single serving. The design "
+("p", "The planner fills slots in the order set out in Section 3.6.2. Its "
+      "first implementation gave each slot a single recipe, and all four test "
+      "profiles came out 35 to 45 per cent below their daily energy target. "
+      "The cause was not in the code: a serving in this corpus is much "
+      "smaller than a meal. The median dinner candidate supplies 381 kcal "
+      "where the dinner slot of a 2,440 kcal day asks for 976, and only 5.5 "
+      "per cent of dinner candidates reach that in one serving. The design "
       "had assumed something the data does not support."),
 
-("p", "The first remedy was to serve multiple portions of the chosen recipe. "
-      "It worked arithmetically and was abandoned on seeing a plan it "
-      "produced: a person facing a small plate adds a side dish rather than "
-      "eating the same dish three times, and an instruction to eat three "
-      "portions is one nobody follows. Measurement agreed: against the 976 "
-      "kcal dinner target, a main dish with up to two "
-      "accompaniments brings 95.9 per cent of dinner candidates within ten "
-      "per cent of target, where repeated servings of the main alone reached "
-      "49.8 per cent, and allowing more than one serving of the main added "
-      "nothing once accompaniments were available. The pool of 13,341 "
-      "accompaniments is drawn from recipes the meal-slot rule had discarded "
-      "and is disjoint from the main corpus, so admitting it leaves the "
-      "figures of Section 3.2.2 unchanged. Daily energy deviation fell from "
-      "35-45 per cent, through 8-9 per cent with portion scaling, to between "
-      "0.6 and 1.6 per cent."),
+("p", "Serving multiple portions of the chosen recipe fixed the arithmetic "
+      "and was abandoned on seeing a plan it produced: nobody follows an "
+      "instruction to eat the same dish three times, and a person facing a "
+      "small plate adds a side. Measurement agreed. Against the 976 kcal "
+      "dinner target, a main dish with up to two accompaniments brings 95.9 "
+      "per cent of dinner candidates within ten per cent of target, against "
+      "49.8 per cent for repeated servings of the main alone; more than one "
+      "serving of the main added nothing once accompaniments existed. The "
+      "pool of 13,341 accompaniments is drawn from recipes the meal-slot rule "
+      "had discarded and is disjoint from the main corpus, so admitting it "
+      "leaves the figures of Section 3.2.2 unchanged. Daily energy deviation "
+      "fell from 35-45 per cent, through 8-9 per cent with portion scaling, "
+      "to between 0.6 and 1.6 per cent."),
 
 ("p", "A working plan overturned a second assumption. Section 3.6.5 had "
-      "barred a recipe from reappearing once placed, on the stated grounds "
-      "that nobody would regard the same dish twice in a week as a "
-      "recommendation. Seen in a produced plan, that reasoning does not hold: "
-      "a dish that is liked, quick and within target is welcome more than "
-      "once provided what is served beside it changes, and the original "
-      "premise was an assumption about users that no user had been asked "
-      "about. Since the right amount of variety is a preference rather than a "
-      "property of the corpus, repetition is now bounded rather than "
-      "forbidden, the bound is exposed as a control, and accompaniments never "
-      "repeat."),
+      "barred a recipe from reappearing once placed, on the grounds that "
+      "nobody would regard the same dish twice in a week as a recommendation. "
+      "Seen in a produced plan that does not hold: a dish that is liked, "
+      "quick and within target is welcome more than once provided what is "
+      "served beside it changes. The premise was an assumption about users "
+      "that no user had been asked about. Repetition is now bounded rather "
+      "than forbidden, the bound is exposed as a control, and accompaniments "
+      "never repeat."),
 
 ("p", "Retaining a meal across a rebuild introduced a subtler defect. The "
-      "look-ahead penalty of Section 3.6.2 estimates whether a candidate "
-      "would leave the rest of the day infeasible, by comparing what remains "
-      "of the day's energy against the slots still to come. When a meal is "
-      "retained, its energy is already counted in what the day has consumed, "
-      "while the slot it occupies was still being counted among those to be "
-      "filled -- so its energy was charged twice and the following slots were "
-      "starved. Counting only unfilled slots corrects it."),
+      "look-ahead penalty compares what remains of the day's energy against "
+      "the slots still to come. A retained meal has its energy counted in "
+      "what the day has consumed, while the slot it occupies was still "
+      "counted among those to be filled, so its energy was charged twice and "
+      "the following slots were starved. Counting only unfilled slots "
+      "corrects it."),
 
-("image", "screenshots/01_form_and_week.png", 6.0),
+("image", "screenshots/01_form_and_week.png", 4.6),
 ("figurecaption", "Figure 4.1  The profile sidebar and the compact view of "
                   "the week. The notice that allergen screening is automated "
                   "and is not a safety guarantee is present on every screen."),
 
-("image", "screenshots/02_day_by_day_crop.png", 6.0),
+("image", "screenshots/02_day_by_day_crop.png", 4.5),
 ("figurecaption", "Figure 4.2  One day of the plan. Each card carries the "
                   "main dish, its accompaniments, the totals for the plate, "
                   "the allergen classes flagged anywhere on it, and the "
                   "complete ingredient list, expanded by default."),
 
 ("p", "The interface produced two defects no automated check in this project "
-      "could have found. The first was a crash: every card reported a failure "
-      "to insert a node and only one card in the week rendered, and that one "
-      "card was the diagnosis. Ingredient names were being interpolated into "
-      "a raw markup string, and 5,982 ingredient names in the corpus contain "
-      "a bare ampersand, which is not a valid entity; the surviving card "
-      "happened to contain none. The rule adopted in response is stronger "
-      "than escaping: corpus text does not enter raw markup at all, and what "
-      "markup remains contains only values this system computes. The check "
+      "could have found. The first was a crash: every card failed to render "
+      "but one, and that one card was the diagnosis. Ingredient names were "
+      "being interpolated into raw markup, and 5,982 ingredient names in the "
+      "corpus contain a bare ampersand, which is not a valid entity; the "
+      "surviving card happened to contain none. The rule adopted is stronger "
+      "than escaping: corpus text does not enter raw markup at all. The check "
       "that guards it renders the interface and asserts that no recipe or "
-      "ingredient name appears in any raw markup block, a static scan of the "
-      "source being unable to tell whether a variable holds corpus text -- an "
-      "earlier static version produced two false positives and was replaced."),
+      "ingredient name appears in any raw markup block, a static scan being "
+      "unable to tell whether a variable holds corpus text. An earlier "
+      "static version produced two false positives and was replaced."),
 
 ("p", "The second defect was purely visual and therefore invisible to every "
       "assertion in the project. The week was first laid out as seven columns "
-      "of full cards. On a wide display each column is about 130 pixels, "
-      "which is narrower than the words that must go in it: recipe names "
-      "wrapped to four lines and the controls degraded to vertical stacks of "
-      "single letters. The automated suite passed in full while this was on "
-      "screen, because it runs against a test harness that builds the element "
-      "tree and never renders it. The defect became visible on the first "
-      "occasion the interface was photographed in a browser. The layout was "
-      "restructured into the two scales described in Section 3.7.2, shown in "
-      "Figure 4.1 and Figure 4.2, and the screenshot script was retained as "
-      "a routine check rather than only as a means of producing figures."),
+      "of full cards, each about 130 pixels on a wide display, which is "
+      "narrower than the words that must go in it: recipe names wrapped to "
+      "four lines and the controls degraded to vertical stacks of single "
+      "letters. The automated suite passed in full while this was on screen, "
+      "because it runs against a harness that builds the element tree and "
+      "never renders it. The defect became visible the first time the "
+      "interface was photographed in a browser. The layout was restructured "
+      "into the two scales of Section 3.7.2, shown in Figure 4.1 and "
+      "Figure 4.2, "
+      "and the screenshot script was kept as a routine check rather than only "
+      "as a means of producing figures."),
 
-("image", "screenshots/04_recipe_detail.png", 6.0),
-("figurecaption", "Figure 4.3  The recipe detail view, showing the "
-                  "description and method, the ingredient list, what the dish "
-                  "supplies against what the slot allows, and a generated "
-                  "note labelled as generated."),
 
-("image", "screenshots/03_nutrition_crop.png", 6.0),
-("figurecaption", "Figure 4.4  The nutritional panel, separating quantities "
+("image", "screenshots/03_nutrition_crop.png", 4.5),
+("figurecaption", "Figure 4.3  The nutritional panel, separating quantities "
                   "to reach from limits not to exceed and stating how the "
                   "targets were derived from the user's own body data."),
 
-("p", "The nutritional panel of Figure 4.4 was rewritten because its first "
+("p", "The nutritional panel of Figure 4.3 was rewritten because its first "
       "version could not be read. The original wording described totals as "
-      "covering every dish on the plate and distinguished ceilings in the "
-      "guidance from targets, which is accurate and is not English a "
-      "non-specialist reads. It now states in plain terms where the numbers "
-      "come from, separates the quantities to reach from the limits not to "
-      "exceed, and reports what the week achieved against each. The "
-      "requirement it satisfies is unchanged; only its legibility to the "
+      "covering every dish on the plate and distinguished guideline ceilings "
+      "from targets: accurate, and not English a non-specialist reads. It now "
+      "states plainly where the numbers come from, separates quantities to "
+      "reach from limits not to exceed, and reports what the week achieved "
+      "against each. The requirement is unchanged; only its legibility to the "
       "person it is for was at fault, and no assertion can detect that."),
 
-("image", "screenshots/08_exclusion_feedback_crop.png", 2.6),
-("figurecaption", "Figure 4.5  The exclusion list naming what a term "
-                  "matched. Making the consequence of an over-broad term "
-                  "visible is what allows the deliberately over-inclusive "
-                  "matching rule of Section 4.5 to be acceptable."),
 
-("image", "screenshots/06_restriction_changed_crop.png", 6.0),
-("figurecaption", "Figure 4.6  A restriction changed and the plan not yet "
+("image", "screenshots/06_restriction_changed_crop.png", 4.7),
+("figurecaption", "Figure 4.4  A restriction changed and the plan not yet "
                   "rebuilt. The plan is labelled as out of date and every "
                   "card is withheld until it is rebuilt."),
 
-("p", "The state shown in Figure 4.6 was originally rendered as an error "
+("p", "The state shown in Figure 4.4 was originally rendered as an error "
       "message. A user reported it as the application having crashed, which "
       "it had not: a red panel is what this framework shows when a script "
       "fails, so a safety notice wearing that appearance is read as a fault. "
@@ -433,75 +407,66 @@ BLOCKS = [
       "sentence would leave the judgement of what is safe to keep with the "
       "component that has just demonstrated it does not know. Where no model "
       "is configured, the network is unavailable or a response is rejected, "
-      "the derived note is shown and no functionality is lost. Figure 4.3 shows "
-      "a note in place, labelled as generated."),
+      "the derived note is shown and no functionality is lost."),
 
 # ---------------------------------------------------------------------------
 ("h2", "4.7  Verification"),
 
-("p", "The system is checked by two suites which are complementary and "
-      "neither of which replaces the other. The first is a set of thirteen "
-      "groups of assertions covering the corpus contract of Section 4.2, "
-      "agreement between the vectorised allergen tagging and the lexicon it "
-      "was derived from, the fail-closed property of the hard filter, the "
-      "invariants of a complete plan, the direction in which a rating moves a "
-      "profile, the exclusion of corpus text from raw markup, the "
-      "collaborative component and the switching policy, the structural "
-      "independence of hard constraints from relaxation, the semantics of the "
-      "exclusion list, the withholding of a plan whose restrictions have "
-      "changed, the safety filter on generated text, and the format of the "
-      "links to source recipes. Where a defect described earlier in this "
-      "chapter was found by an assertion, that assertion remains in the suite."),
+("p", "The system is checked by two complementary suites, neither of which "
+      "replaces the other. The first is thirteen groups of assertions "
+      "covering four things: that the corpus reproduces the contract of "
+      "Section 4.2; that every safety property holds, meaning the "
+      "fail-closed filter, the independence of hard constraints from "
+      "relaxation, the withholding of a plan whose restrictions have changed "
+      "and the safety filter on generated text; that a complete plan "
+      "satisfies its invariants and responds to a rating in the right "
+      "direction; and that no corpus text reaches raw markup. Where a defect "
+      "described earlier was found by an assertion, that assertion remains "
+      "in the suite."),
 
 ("p", "The second suite drives the interface in a real browser and "
-      "photographs it. Its immediate purpose is to produce the figures in "
-      "this chapter reproducibly, rather than by hand and quietly going "
-      "stale, but its value proved diagnostic. The first suite runs against a "
-      "harness that executes the application and inspects the element tree "
-      "without laying it out, so it cannot see a column too narrow for its "
-      "contents -- exactly the class of defect the second finds. Every visual "
-      "defect in this project was found either by it or by looking at the "
-      "running interface."),
+      "photographs it. Its immediate purpose is to produce this chapter's "
+      "figures reproducibly rather than by hand, but its value proved "
+      "diagnostic: the first suite inspects the element tree without laying "
+      "it out, so it cannot see a column too narrow for its contents. Every "
+      "visual defect in this project was found by the second suite or by "
+      "looking at the running interface."),
 
-("p", "The screenshot script starts and stops its own server. This is not "
-      "tidiness: the framework re-executes the main script on every "
+("p", "The screenshot script starts and stops its own server, because "
+      "the framework re-executes the main script on every "
       "interaction but retains imported modules, so a server started before a "
-      "change to the stylesheet continues to serve the previous one. A run "
-      "against a long-lived server therefore photographs whatever was loaded "
-      "at start-up while reporting no errors, and a round of interface "
-      "changes was in fact reviewed that way before the cause was identified. "
-      "The script also asserts the state it is about to photograph. When the "
+      "stylesheet change keeps serving the previous one, photographing "
+      "whatever was loaded at start-up while reporting no errors. A round of "
+      "interface changes was reviewed that way before the cause was found. "
+      "The script also asserts the state it is about to photograph: when the "
       "interaction that changes a restriction failed silently, the resulting "
       "figure showed an unlocked plan and would have documented the opposite "
-      "of what it was taken to show; the script now refuses to photograph a "
-      "state it cannot confirm."),
+      "of what it was taken to show."),
 
-("p", "One failure of this verification strategy is worth more than its "
-      "successes. The exclusion defect of Section 4.5 survived a suite that "
-      "was passing in full, and it survived an assertion written specifically "
-      "to guard it. That assertion checked that no surviving recipe contained "
-      "the string oats, which is true of a plan containing oatmeal, so it "
-      "passed. The assertion tested the implementation's own notion of "
-      "matching rather than the user's notion of an oat, and an assertion can "
-      "only protect the property it actually states. A wrong assertion is "
-      "worse than a missing one, because it is counted as coverage. This is "
-      "the second defect in the project to be found by using the running "
-      "system while the automated suite reported success, the first being the "
-      "nutritional term of Section 4.5. Both point the same way: automated "
-      "checks defend against the failures their author has already imagined, "
-      "and the failures that matter most are the ones nobody imagined. That "
-      "is the argument for evaluating a system by using it, and for the "
-      "independent user evaluation which Section 5.9 identifies as the "
-      "principal limitation of this work."),
+("p", "The exclusion defect of Section 4.5 shows where this strategy fails. "
+      "It survived a suite passing in full, and survived "
+      "an assertion written specifically to guard it: that assertion checked "
+      "that no surviving recipe contained the string oats, which is true of "
+      "a plan containing oatmeal, so it passed. It tested the "
+      "implementation's own notion of matching rather than the user's notion "
+      "of an oat, and an assertion protects only the property it states. A "
+      "wrong assertion is worse than a missing one, because it is counted as "
+      "coverage. This is the second defect found by using the running system "
+      "while the suite reported success, the first being the nutritional "
+      "term of Section 4.5. Both point the same way: automated checks defend "
+      "against the failures their author has already imagined. That is the "
+      "argument for evaluating a system by using it, and for the independent "
+      "user evaluation Section 5.9 identifies as this work's principal "
+      "limitation."),
 
 # ---------------------------------------------------------------------------
 ("h2", "4.8  Summary of defects and their origins"),
 
-("p", "Table 4.2 collects the defects discussed above with the means by which "
-      "each was found. The distribution is the substance of the table: "
-      "assertions caught the arithmetic errors, users caught the errors of "
-      "assumption, and rendering caught what neither could see. No single "
-      "method found more than half of them."),
+("p", "Table 4.2 collects the defects discussed above with the means by "
+      "which each was found. Assertions caught the arithmetic errors, "
+      "users caught the errors of "
+      "assumption, rendering caught what neither could see, and no single "
+      "method found more than half."),
 
 ("tablecaption", "Table 4.2  Defects found during implementation, how each "
                  "was discovered, and its effect."),
@@ -536,14 +501,8 @@ BLOCKS = [
 ]),
 
 ("p", "Thirteen defects are listed and five of them were found by using the "
-      "running system rather than by any automated check. That proportion is "
-      "itself a finding, and it vindicates the decision recorded in Chapter 1 "
-      "to build a working system early rather than to specify it completely "
-      "first. Several of the five could not have been found any other way: "
-      "they are errors of assumption about what a person wants or can read, "
-      "and no assertion written by the author of an assumption will "
-      "contradict it. One qualification belongs with that claim, and Section "
-      "5.8 returns to it: the system was used here by its own author, who "
-      "cannot be surprised by it in the way an independent participant "
-      "could, so these observations are formative rather than evaluative."),
+      "running system rather than by any automated check. Several of the "
+      "five could not have been found any other way: they are errors of "
+      "assumption about what a person wants or can read, and no assertion "
+      "written by the author of an assumption will contradict it."),
 ]

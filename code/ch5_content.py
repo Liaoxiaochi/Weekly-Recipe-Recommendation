@@ -30,10 +30,15 @@ in Chapters 2 and 3.
 BLOCKS = [
 
 # ===========================================================================
-("h1", "Chapter 5 Evaluation"),
+("h1", "Chapter 5 Software Testing and Evaluation"),
 
 ("p", "This chapter evaluates the system against the objectives of Section "
-      "1.2. It reports rating prediction accuracy, top-N ranking quality "
+      "1.2. Testing of the software itself is reported where it was carried "
+      "out, in Section 4.7: thirteen groups of assertions covering the "
+      "corpus contract, the safety properties and the plan invariants, and "
+      "a second suite that drives the interface in a browser. This chapter "
+      "measures what the tested system then achieves. It reports rating "
+      "prediction accuracy, top-N ranking quality "
       "against four baselines, nutritional attainment, diversity and "
       "coverage, the sensitivity of the design to its main parameters, and "
       "the error rate of the allergen screening measured on data it was not "
@@ -49,18 +54,16 @@ BLOCKS = [
       "entered by hand, so re-running the experiments regenerates the chapter's "
       "evidence rather than merely confirming it."),
 
-("p", "Two properties of the corpus constrain what any offline experiment on "
-      "it can show, and both are stated here because they govern how the "
-      "results should be read. The first is sparsity: the median user has "
-      "rated exactly one recipe, and only 5.6 per cent have rated ten or "
-      "more. A held-out ranking experiment is therefore possible only for the "
-      "minority with enough history to hold anything out, and its results "
-      "describe that minority rather than users in general. The second is "
-      "skew: 88.9 per cent of ratings are four or five stars. Precision is "
-      "consequently a weak discriminator, and an absolute value of it carries "
-      "no information without a baseline beside it. Every ranking result "
-      "below is therefore reported against a random and a popularity "
-      "baseline."),
+("p", "Two properties of the corpus govern how the results should be read. "
+      "The first is sparsity: the median user has rated exactly one recipe, "
+      "and only 5.6 per cent have rated ten or more, so a held-out ranking "
+      "experiment is possible only for the minority with enough history to "
+      "hold anything out and describes that minority rather than users in "
+      "general. The second is skew: 88.9 per cent of ratings are four or "
+      "five stars, so precision is a weak discriminator and an absolute "
+      "value of it carries no information without a baseline beside it. "
+      "Every ranking result below is reported against a random and a "
+      "popularity baseline."),
 
 ("p", "The ranking experiment uses the 8,076 users who have at least ten "
       "interactions of which at least five are positive, taking a rating of "
@@ -92,10 +95,13 @@ BLOCKS = [
 ]),
 
 ("p", "The model improves on the strongest trivial baseline by 0.039 of a "
-      "rating point, or 3.2 per cent. That is a modest margin, and it is the "
-      "margin the corpus allows: with a mean rating of 4.41 and most of the "
-      "mass at five, predicting the mean is already close to correct, and "
-      "there is little variance left for a model to explain. The item mean "
+      "rating point, or 3.2 per cent. That is a modest margin, and it is "
+      "the margin the corpus allows: with a mean rating of 4.41 and most "
+      "of the mass at five, predicting the mean is already close to "
+      "correct, and there is little variance left for a model to explain. "
+      "This is the sparsity Section 2.2.2 identifies as the standing "
+      "weakness of collaborative filtering, measured here on the corpus "
+      "this system actually uses. The item mean "
       "performing worst of the three is itself informative, and Section 5.3 "
       "returns to it, because the same property that makes the item mean a "
       "poor predictor made an item-based term actively harmful for ranking."),
@@ -113,30 +119,33 @@ BLOCKS = [
 
 ("p", "The diagnosis is arithmetic. A predicted rating is a global mean plus "
       "a user bias plus an item bias plus the latent inner product. For a "
-      "fixed user the first two are constant across recipes and cannot affect "
-      "an ordering, so ranking by the prediction ranks by the item bias plus "
-      "the latent term. The item bias is estimated per recipe, and 76.9 per "
-      "cent of recipes in this corpus carry fewer than five ratings while "
-      "88.9 per cent of all ratings are four or five. A recipe rated once, at "
-      "five stars, therefore acquires a large positive bias from a single "
-      "observation, and outranks every recipe the model has genuinely "
-      "learned about. Scoring the same model by its latent term alone, "
-      "measured over 300 held-out users, raised NDCG@10 from 0.0000 to "
-      "0.0028: the factorisation was never the problem, and the bias term "
-      "was. The effect is visible in what the two orderings select. The top "
-      "ten recipes ranked by predicted rating have a median of six ratings "
-      "between them; ranked by the latent term, the median is 92."),
+      "fixed user the first two are constant and cannot affect an ordering, "
+      "so ranking by the prediction ranks by item bias plus latent term. The "
+      "item bias is estimated per recipe, and 76.9 per cent of recipes carry "
+      "fewer than five ratings while 88.9 per cent of all ratings are four "
+      "or five. A recipe rated once at five stars therefore acquires a large "
+      "positive bias from a single observation and outranks every recipe the "
+      "model has genuinely learned about. Scoring by the latent term alone, "
+      "over the same 2,000 users, raised NDCG@10 from 0.0001 to 0.0025: the "
+      "factorisation was never the problem, the bias term was. The two "
+      "orderings also select differently: the top ten by predicted rating "
+      "carry a median of three ratings each, against 53.5 by the latent "
+      "term. The first was selecting recipes about which almost nothing is "
+      "known."),
 
 ("p", "The component was therefore changed to expose its rating prediction "
-      "and its ranking signal separately, as Section 3.4.2 now specifies, and "
-      "the whole experiment repeated. Table 5.2 reports the result. The "
-      "correction raises the collaborative component from 0.0001 to 0.0025 "
-      "and the deployed hybrid from 0.0004 to 0.0026, and leaves the rating "
-      "error of Table 5.1 untouched, since rating prediction still uses the "
-      "full expression. Figure 5.1 shows the corrected picture."),
+      "and ranking signal separately, as Section 3.4.2 now specifies, and "
+      "the experiment repeated. Table 5.2 reports the result: the correction "
+      "raises the collaborative component from 0.0001 to 0.0025 and the "
+      "deployed hybrid from 0.0004 to 0.0026, leaving the rating error of "
+      "Table 5.1 untouched, since prediction still uses the full expression. "
+      "Figure 5.1 shows the corrected picture."),
 
 ("tablecaption", "Table 5.2  Top-N ranking over 2,000 held-out users, before "
-                 "and after the correction described above. Higher is better."),
+                 "and after the correction described above. Both columns come "
+                 "from the same experiment run under the two orderings on the "
+                 "same seed and the same split, so they are directly "
+                 "comparable. Higher is better."),
 ("table", [
     ["System", "P@10", "NDCG@10 before", "NDCG@10 after"],
     ["Random", "0.0001", "0.0000", "0.0000"],
@@ -146,14 +155,14 @@ BLOCKS = [
     ["Switching hybrid (deployed)", "0.0015", "0.0004", "0.0026"],
 ]),
 
-("image", "fig51_ranking.png", 6.1),
+("image", "fig51_ranking.png", 4.6),
 ("figurecaption", "Figure 5.1  Ranking quality after the correction. The two "
                   "baselines are shown in grey, the two components in blue, "
                   "and the hybrid the system deploys in the darker shade."),
 
 ("p", "The correction also makes the switching policy of Section 3.4.3 "
       "testable, because it gives the collaborative branch something to be "
-      "better at. Figure 5.2 separates the evaluated users into those with "
+      "better at. The evaluated users separate into those with "
       "fewer than ten ratings after the holdout, whom the controller routes "
       "to the content-based branch, and those with ten or more, whom it "
       "routes to the collaborative branch. On the first group the "
@@ -165,11 +174,18 @@ BLOCKS = [
       "component alone. Of the 2,000 users, it routed 1,697 to the "
       "collaborative branch and 303 to the content-based one."),
 
-("image", "fig52_switching.png", 6.1),
-("figurecaption", "Figure 5.2  The switching policy selects the stronger "
-                  "component in each regime. Left, users with too little "
-                  "history for the collaborative branch; right, users with "
-                  "enough."),
+("p", "The popularity baseline's advantage is not an artefact of the cut-off "
+      "chosen. Measured by recall, it retrieves 6.8 times as many held-out "
+      "items as the deployed hybrid at K=5, 9.4 times as many at K=10 and 9.3 "
+      "times at K=20: the gap widens as the list lengthens and then settles, "
+      "rather than closing. This matters for how the result should be read. "
+      "Were the advantage to narrow with K, it could be attributed to the "
+      "hybrid ordering the right items slightly too low, which better tuning "
+      "might fix. It does not narrow, which points instead at the sampling "
+      "property described in Section 2.2.4: the held-out set is drawn from "
+      "what users chose to rate, and popular items are over-represented in it "
+      "at every depth."),
+
 
 ("p", "The popularity baseline nevertheless outranks every personalised "
       "method by roughly a factor of nine, and reporting that is more useful "
@@ -211,79 +227,118 @@ BLOCKS = [
 
 ("p", "The first row is the answer. A popularity ranker, left to plan a week, "
       "put a declared allergen on the plate 44 times in 252 meals and broke "
-      "the user's dietary regime 65 times, while reaching 58 per cent of "
-      "their energy target. It is the strongest ranker in Section 5.3 and it "
-      "is unusable, because ranking well and planning safely are not the same "
+      "the dietary regime 65 times, while reaching 58 per cent of the energy "
+      "target. It is the strongest ranker in Section 5.3 and it is "
+      "unusable, because ranking well and planning safely are not the same "
       "capability. The second row isolates the hard filter: it removes every "
-      "violation, which is what it exists to do, and it improves nothing "
-      "nutritionally -- energy attainment in fact falls, because excluding "
-      "recipes without replacing the scoring leaves a smaller pool ranked by "
-      "the same popularity that ignored nutrition in the first place. The "
-      "third row is what the nutritional scoring adds on top: energy from 54 "
-      "to 92 per cent of target, and compliant days from 2.6 to 4.1. Each "
-      "layer of the design is doing work that the layer below it does not."),
+      "violation and improves nothing nutritionally, energy attainment "
+      "falling because excluding recipes without replacing the scoring "
+      "leaves a smaller pool ranked by the same popularity that ignored "
+      "nutrition in the first place. The third row is what nutritional "
+      "scoring adds: energy from 54 to 92 per cent of target, compliant days "
+      "from 2.6 to 4.1. Each layer does work the layer below it does not."),
 
-("p", "One column of this comparison went against the system and is reported "
-      "with the rest. Counting meals whose preparation time exceeds the "
-      "user's stated budget for that day, the complete system produces more "
-      "of them than either baseline. Part of that is not comparable: a "
-      "baseline week serves one dish per meal while the system serves a main "
-      "dish and up to two accompaniments, so more cooking is being counted. "
-      "The rest is a genuine defect. The time budget is applied when the main "
-      "dish is chosen and is not applied again when accompaniments are added, "
-      "so a twenty-five minute main can acquire two twenty-minute sides "
-      "against a thirty-minute budget. It is the same error as the clinical "
-      "ceiling described in Section 4.5, which bound the quantity in one "
-      "serving rather than the quantity on the plate, and it survived because "
-      "no assertion checked the plate's total time. Section 6.2 lists the "
-      "correction."),
+("p", "One column went against the system and is reported with the rest. "
+      "Counting meals whose preparation time exceeds the stated budget for "
+      "that day, the complete system produces more than either baseline. "
+      "Part of that is not comparable: a baseline week serves one dish per "
+      "meal while the system serves a main and up to two accompaniments. The "
+      "rest is a genuine defect. The time budget is applied when the main "
+      "dish is chosen and not re-applied when accompaniments are added, so a "
+      "twenty-five minute main can acquire two twenty-minute sides against a "
+      "thirty-minute budget. It is the same error as the clinical ceiling of "
+      "Section 4.5, which bound one serving rather than the plate, and it "
+      "survived because no assertion checked the plate's total time. Section "
+      "6.5 lists the correction."),
+
+("p", "A second effect is visible only per profile, and it shows the "
+      "layers interacting rather than simply adding up. Averaged over "
+      "twelve profiles the middle arm produces 18.9 distinct main dishes "
+      "against the complete system's 21, but the difference is not spread "
+      "evenly. On the vegetarian and vegan profiles the filtered baseline "
+      "produces 16 distinct dishes in a week of 21 meals, and 17 on the "
+      "vegetarian profile with an egg allergy, against 20 on the six "
+      "unrestricted or mildly restricted ones. Filtering alone therefore "
+      "concentrates the plans of exactly those users whose choices are "
+      "already narrowest: the smaller the surviving pool, the more often "
+      "the same popular survivor wins. The complete system returns all "
+      "twelve to 21 distinct dishes, because scoring each slot against "
+      "what remains of that day's allowance makes consecutive slots pose "
+      "different problems. Exclusion and variety are not independent, and "
+      "measuring them on separate plans would have hidden this."),
 
 # ---------------------------------------------------------------------------
 ("h2", "5.5  Nutritional attainment"),
 
-("p", "Twelve profiles were constructed to span sex, age, body mass, activity "
-      "level, dietary regime, declared allergens, clinical limits and stated "
-      "ingredient preferences, and a week was generated for each. Every one "
-      "returned a complete plan of twenty-one meals. Figure 5.3 sets the "
-      "result against the targets derived in Section 3.3.2."),
+("p", "Twelve profiles spanning sex, age, body mass, activity level, dietary "
+      "regime, declared allergens, clinical limits and stated ingredient "
+      "preferences were each given a week, and every one returned a complete "
+      "plan of twenty-one meals. Figure 5.2 sets the result against the "
+      "targets of Section 3.3.2."),
 
-("image", "fig53_nutrition.png", 6.1),
-("figurecaption", "Figure 5.3  Nutritional attainment for twelve profiles. "
+("image", "fig53_nutrition.png", 4.6),
+("figurecaption", "Figure 5.2  Nutritional attainment for twelve profiles. "
                   "Energy is the mean across the seven days; fat and sodium "
                   "are the worst single day, since a ceiling is a claim about "
                   "every day rather than about an average."),
 
-("p", "Energy attainment ranges from 76 to 99 per cent of target, with a mean "
-      "of 92 per cent, and is an undershoot in every profile. The ceilings "
-      "hold rather better: worst-day sodium ranges from 81 to 102 per cent of "
-      "the guideline and worst-day fat from 96 to 116 per cent. The number of "
-      "days on which all four ceilings are respected simultaneously ranges "
-      "from one to six out of seven, which is the figure to quote when asked "
-      "whether the system produces compliant weeks: it produces weeks that "
-      "are close on every measure and exactly compliant on all four at once "
-      "only some of the time. Section 3.5.2 predicted this, since only 4.1 "
-      "per cent of the main-dish corpus satisfies all four ceilings at once, "
-      "and a planner restricted to that subset could not also match "
-      "preferences."),
+("p", "The claim being tested here is the one Section 2.2.2 raises: fewer "
+      "than 40 per cent of the recipes in a corpus of this kind meet World "
+      "Health Organization criteria [31], so a plan drawn from it is "
+      "nutritionally sound only if the system makes it so. Energy "
+      "attainment ranges from 76 to 99 per cent of target, mean 92, and "
+      "is an undershoot in every profile. The ceilings hold better: worst-day "
+      "sodium from 81 to 102 per cent of the guideline, worst-day fat from 96 "
+      "to 116. The number of days on which all four ceilings hold at once "
+      "ranges from one to six of seven, which is the figure to quote when "
+      "asked whether the system produces compliant weeks: it produces weeks "
+      "close on every measure and exactly compliant on all four only some of "
+      "the time. Section 3.5.2 predicted this, since only 4.1 per cent of the "
+      "main-dish corpus satisfies all four at once, and a planner restricted "
+      "to that subset could not also match preferences."),
 
-("p", "The undershoot in energy is the price of preference matching, and it "
-      "is instructive that it is visible at all. An earlier version of this "
-      "experiment used profiles with no stated ingredient preferences; energy "
-      "attainment was then 95 to 99 per cent, because with no preference "
-      "signal the relevance term is constant and the planner is free to "
-      "optimise energy alone. Adding preferences puts relevance into "
-      "competition with the nutritional terms, and the profile with the "
-      "highest energy target and the most specific tastes falls furthest "
-      "short. The earlier figure measured a recommender with nothing to "
-      "recommend, and is reported here only to make the trade-off visible."),
+("p", "The undershoot is the price of preference matching. An earlier "
+      "version of this experiment used profiles with no stated preferences "
+      "and reached 95 to 99 per cent, because with no preference signal "
+      "the relevance term is constant and the planner may optimise energy "
+      "alone. That figure measured a recommender with nothing to "
+      "recommend; it is given only to make the trade-off visible."),
+
+("p", "The shortfall is not spread evenly across the macronutrients, and "
+      "where it falls says something about what the planner protects. "
+      "Protein attainment is at or above target in all twelve profiles, "
+      "ranging from 100.4 to 112.3 per cent, while carbohydrate tracks the "
+      "energy shortfall closely at 76.6 to 100.7 per cent. The energy that is "
+      "missing is therefore almost entirely missing carbohydrate. This was "
+      "not designed for: the scoring function of Section 3.5.2 weights the "
+      "macronutrients equally and carries no instruction to favour protein. "
+      "It follows instead from the corpus, in which dishes dense in protein "
+      "are common while dishes supplying carbohydrate without also supplying "
+      "fat or sugar are not, so the planner meets the protein target early in "
+      "each day and then finds the remaining allowance hard to fill without "
+      "breaching a ceiling. The behaviour is defensible, but it is a property "
+      "of the data rather than a decision, and it would need to be made "
+      "explicit before the system were used by anyone whose carbohydrate "
+      "intake mattered clinically."),
+
+("p", "Restriction turns out to help rather than hinder on one measure. The "
+      "two profiles furthest below the saturated-fat ceiling are the vegan "
+      "profile at 45.3 per cent of the guideline and the milk-allergy profile "
+      "at 62.6 per cent, against a range of 87.9 to 102.0 per cent across the "
+      "remaining ten. Excluding dairy and meat removes the corpus's densest "
+      "sources of saturated fat, so a constraint imposed for one reason "
+      "relieves an unrelated nutritional pressure. This runs opposite to "
+      "the intuition that restricted diets are harder to plan for, and because Section 5.6 finds the same "
+      "direction of effect on diversity."),
 
 # ---------------------------------------------------------------------------
 ("h2", "5.6  Diversity and coverage"),
 
-("p", "Within-week diversity was measured as the mean pairwise dissimilarity "
-      "of the ingredient sets of the main dishes, on which the twelve plans "
-      "score 0.925 out of a possible 1.0, and every plan used twenty-one "
-      "distinct main dishes. Catalogue coverage was measured separately over "
+("p", "Diversity within a week was measured as intra-list dissimilarity "
+      "over the ingredient sets of the main dishes, the measure Section "
+      "2.2.4 introduces from Ziegler et al. [50] and Section 3.6.5 "
+      "adopts. The twelve plans score 0.925 out of a possible 1.0, "
+      "and every plan used twenty-one distinct main dishes. Catalogue coverage was measured separately over "
       "thirty randomly varied profiles, since twelve plans cannot cover a "
       "corpus of 141,744 recipes and a figure from them would describe the "
       "number of plans rather than the recommender. Those thirty plans drew "
@@ -291,21 +346,53 @@ BLOCKS = [
       "corpus. The more informative figure is the concentration: the single "
       "most frequently selected recipe accounts for 1.04 per cent of all "
       "slots, so the planner is not falling back on a small set of "
-      "favourites."),
+      "favourites. A blunter version of the same figure makes the point "
+      "better: 411 of the 688 recipes selected, or 59.7 per cent, were used "
+      "exactly once across all thirty plans."),
+
+("p", "Diversity is also higher, not lower, for users with dietary "
+      "restrictions. The two unrestricted profiles score 0.888 and 0.899 on "
+      "intra-list dissimilarity, the lowest two of the twelve, while the "
+      "milk-allergy and vegan profiles score 0.953 and 0.952, the highest; "
+      "the mean over the ten restricted profiles is 0.932 against 0.893 for "
+      "the two unrestricted ones. The explanation is a property of the "
+      "measure rather than a merit of the system: dissimilarity is computed "
+      "over ingredient sets, and excluding a widely used ingredient class "
+      "removes the dishes that share it, so what survives is more spread out "
+      "in ingredient space. Read together with Section 5.4, the two results "
+      "bound each other. Filtering alone reduces the number of distinct "
+      "dishes offered to restricted users, while the dishes that are offered "
+      "are more different from one another. Neither figure means much without "
+      "the other, and quoting only the favourable one would misrepresent the "
+      "system."),
 
 # ---------------------------------------------------------------------------
 ("h2", "5.7  Parameter sensitivity"),
 
 ("p", "The weight given to exceeding a guideline ceiling is the parameter the "
-      "design is most sensitive to, and Figure 5.4 shows why it exists. With "
+      "design is most sensitive to, and Figure 5.3 shows why it exists. With "
       "the ceilings unscored, worst-day free sugars reach 578 per cent of the "
       "guideline; at a weight of four they reach 103 per cent. Saturated fat "
       "falls from 192 to 100 per cent and sodium from 152 to 99 per cent over "
       "the same range. The adopted value of four is the smallest that brings "
-      "all four nutrients to within a few per cent of their ceilings."),
+      "sugar, saturated fat and sodium to within a few per cent of their "
+      "ceilings."),
 
-("image", "fig54_ceiling_weight.png", 6.1),
-("figurecaption", "Figure 5.4  Worst-day nutrient totals against the weight "
+("p", "Total fat is the exception, and it is stated rather than passed over. "
+      "It falls from 144 per cent of the guideline at a weight of zero to "
+      "116 at a weight of four, a reduction of 28 points against the 475 "
+      "removed from free sugars over the same range. It is the only one "
+      "of the four that the parameter does not bring under control. Raising the weight "
+      "further does not resolve it: between two and four the figure moves by "
+      "14 points while the other three are already at their ceilings. The "
+      "cause is that fat is present in almost every candidate rather than "
+      "concentrated in a subset the way free sugars are, so penalising it "
+      "does not point towards a different dish. This matches the worst-day "
+      "range of 96 to 116 per cent in Section 5.5, and means the fat ceiling "
+      "is the one guideline this system should not be described as holding."),
+
+("image", "fig54_ceiling_weight.png", 4.6),
+("figurecaption", "Figure 5.3  Worst-day nutrient totals against the weight "
                   "given to exceeding a ceiling. The vertical scale is "
                   "logarithmic."),
 
@@ -319,26 +406,27 @@ BLOCKS = [
 
 ("p", "The bound on how often a main dish may recur produced no effect at "
       "all. Section 3.6.5 introduced it after a user objected that a dish "
-      "they liked should be allowed to return within a week, and undertook to "
-      "quantify the resulting trade-off between variety and preference "
-      "matching. At bounds of one, two and three the measured plans are "
-      "identical: twenty-one distinct main dishes, the same diversity, the "
-      "same mean relevance. Setting the repetition penalty of Section 3.5.2 "
-      "to zero does not change this either, which rules out the obvious "
-      "explanation. The cause is that each slot is scored against what "
-      "remains of that day's nutritional allowance, so no two slots present "
-      "the same problem and the recipe that wins one rarely wins another. "
-      "The bound is therefore inert: the feature a user asked for is "
-      "implemented and never fires. It is reported here as a negative result "
-      "rather than omitted, and Section 6.2 proposes what would be needed to "
-      "make it active."),
+      "they liked should be allowed to return within a week. At bounds of "
+      "one, two and three the measured plans are identical: twenty-one "
+      "distinct main dishes, the same diversity, the same mean relevance. "
+      "Setting the repetition penalty of Section 3.5.2 to zero does not "
+      "change this either, which rules out the obvious explanation. The "
+      "cause is that each slot is scored against what remains of that day's "
+      "nutritional allowance, so no two slots present the same problem and "
+      "the recipe that wins one rarely wins another. The feature a user "
+      "asked for is implemented and never fires. It is reported as a "
+      "negative result rather than omitted, and Section 6.5 proposes what "
+      "would make it active."),
 
 # ---------------------------------------------------------------------------
 ("h2", "5.8  Allergen screening"),
 
-("p", "The rate at which the screening misses an allergen that is genuinely "
-      "present is the one measurement in this chapter with a safety "
-      "consequence, and it requires data the rules were not built from. The "
+("p", "The rate at which the screening misses an allergen that is "
+      "genuinely present is the one measurement in this chapter with a "
+      "safety consequence, and it requires data the rules were not built "
+      "from. It also fills the gap Section 2.3 identifies, where systems "
+      "that enforce exclusion describe the mechanism without reporting "
+      "how often it fails. The "
       "lexicon was revised using the errors found on the sample of 160 "
       "recipes described in Section 4.2, so its recall on that sample "
       "measures how thoroughly the repair was applied rather than how well "
@@ -383,18 +471,17 @@ BLOCKS = [
 ("h2", "5.9  Limitations"),
 
 ("p", "No independent user evaluation was carried out, and this is the "
-      "principal limitation of the work. A usability study with three to five "
-      "participants was planned and its materials prepared, but such a study "
-      "requires ethical approval, and on the supervisor's advice an "
-      "application at this stage of the project was not a sound use of the "
-      "time remaining. The study was therefore not run. That is the reason, "
-      "and it is given plainly because the alternative -- presenting the "
-      "absence of user evaluation as a considered methodological choice -- "
-      "would be untrue. Chapter 4 reports defects found by "
-      "using the running system, but that use was by the author, who cannot "
-      "be surprised by an interface he designed and who knows what every "
-      "control is for. Those observations are formative rather than "
-      "evaluative, and no claim about usability in this dissertation rests on "
+      "principal limitation of the work. A usability study with three to "
+      "five participants was planned and its materials prepared, but such a "
+      "study requires ethical approval, and the supervisor, asked on 18 "
+      "August 2026, advised that approval would in general be needed and "
+      "that beginning an application at that late stage would not be a good "
+      "idea. The study was therefore not run. Chapter 4 reports defects "
+      "found by using the "
+      "running system, but that use was by the author, who cannot be "
+      "surprised by an interface he designed. Those observations are "
+      "formative rather than evaluative, and no claim about usability "
+      "rests on "
       "anything stronger. What can be said is bounded accordingly: the "
       "system produces complete plans for every profile tested, respects "
       "every declared restriction, and presents its reasoning in named terms, "
@@ -421,29 +508,48 @@ BLOCKS = [
 ("h2", "5.10  Discussion"),
 
 ("p", "The most useful thing this evaluation did was not to score the system "
-      "but to find a fault in it. The collaborative component satisfied every "
-      "assertion in the verification suite, predicted ratings better than any "
-      "baseline, and ranked at chance, and none of the thirteen groups of "
-      "checks in Chapter 4 could have detected that, because each tested a "
-      "property the component genuinely had. It took an experiment measuring "
-      "the quantity the component exists to produce. That is an argument for "
-      "treating evaluation as part of development rather than as a report "
-      "written after it, and this project can make the argument from its own "
-      "record."),
+      "but to find a fault in it. The collaborative component satisfied "
+      "every assertion in the verification suite, predicted ratings better "
+      "than any baseline, and ranked at chance; none of the thirteen groups "
+      "of checks in Chapter 4 could have detected that, because each tested "
+      "a property the component genuinely had. It took an experiment "
+      "measuring the quantity the component exists to produce. Evaluation "
+      "therefore belongs inside development rather than in a report "
+      "written after it."),
 
-("p", "The popularity baseline's advantage deserves the same treatment. It is "
+("p", "The popularity baseline's advantage needs the same care. It is "
       "tempting to read it as showing that personalisation does not work "
-      "here, and on this metric it does show that. But the metric asks which "
-      "individual recipes a user would have rated, and the system does not "
-      "answer that question. It answers a different one: which twenty-one "
-      "meals, taken together, respect a person's allergies and dietary "
-      "regime, approach their nutritional targets, fit the time they have on "
-      "each day, and do not repeat. A popularity ranking cannot answer that "
-      "at all, because it has no mechanism for excluding an allergen or for "
-      "balancing a day. The ranking experiment measures one input to the "
-      "planner rather than the planner's output, and the results in Sections "
-      "5.4 to 5.7 measure the output. Both belong in an evaluation, and "
-      "confusing the first for the second would misrepresent what was built."),
+      "here, and on this metric it does. But the metric asks which individual "
+      "recipes a user would have rated, and the system answers a different "
+      "question: which twenty-one meals, taken together, respect a person's "
+      "restrictions and approach their nutritional targets. A popularity "
+      "ranking has no mechanism for excluding an allergen or balancing a day. "
+      "The ranking experiment measures one input to the planner rather than "
+      "its output, and Sections 5.4 to 5.7 measure the output."),
+
+("p", "Neither finding is peculiar to this system. Cremonesi et al. [37] "
+      "reported the first: models tuned to minimise rating-prediction error "
+      "lost their advantage when ranked on a top-N task, where an "
+      "unpersonalised popularity ranking was a strong competitor. That is "
+      "precisely the pattern of Table 5.1 against Table 5.2, arrived at here "
+      "independently. Herlocker et al. [36] gave the general "
+      "form of the second: an accuracy measure is meaningful only relative "
+      "to the task it is chosen for, and the task this system performs is "
+      "not the one a top-N metric scores. Ferrari Dacrema et al. [35] add a "
+      "caution that cuts the other way: well-tuned conventional baselines "
+      "often survive comparison with far more elaborate methods, so the "
+      "modest ranking figures here are not on their own evidence that a more "
+      "sophisticated model would have done better."),
+
+
+("p", "One boundary applies to all of it, and Section 2.2.4 anticipated it. "
+      "Knijnenburg et al. [38] show that objective accuracy explains only "
+      "part of what a person experiences when using a recommender. Every "
+      "result in this chapter is an offline measurement: together they "
+      "establish that the system produces plans with the properties it was "
+      "designed to give them, and they cannot establish that a person offered "
+      "such a plan would cook from it. That is the limitation recorded in "
+      "Section 5.9."),
 
 ("p", "Read together, the results support the design's central claims with "
       "one clear exception. The hard filter never admitted a declared "

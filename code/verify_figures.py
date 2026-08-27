@@ -39,9 +39,12 @@ TOL = 10               # per-channel tolerance, absorbs PNG/AA rounding
 # are photographs of something we do not control.  They are listed by name
 # rather than pattern-matched, so adding one is a deliberate act and an
 # off-style diagram can never be waved through by accident.
-EXTERNAL = {
-    "fig32_foodcom_nutrition.png",   # Food.com nutrition panel, recipe 61040
-}
+# Empty since 19 August 2026: the Food.com nutrition panel was the only entry,
+# and it was removed from Section 3.2.3 at the author's request.  The set is
+# kept rather than deleted because the next author-supplied external asset will
+# need it, and because an empty waiver list documents that nothing is currently
+# exempt from the palette check.
+EXTERNAL = set()
 
 fail = []
 
@@ -108,11 +111,16 @@ print()
 print("=" * 70)
 print("3. REFERENCED FIGURES EXIST")
 print("=" * 70)
-content = os.path.join(HERE, "ch3_content.py")
+# Scan every generated chapter, not only Chapter 3.  Until 19 August 2026 this
+# looked at ch3_content.py alone, which left the four Chapter 5 figures outside
+# the "referenced but missing" check entirely and reported them as orphans.
 referenced = set()
-if os.path.exists(content):
-    with open(content, encoding="utf-8") as f:
-        referenced = set(re.findall(r'"(fig\w+\.png)"', f.read()))
+for chapter in ("ch3_content.py", "ch4_content.py", "ch5_content.py",
+                "ch6_content.py"):
+    content = os.path.join(HERE, chapter)
+    if os.path.exists(content):
+        with open(content, encoding="utf-8") as f:
+            referenced |= set(re.findall(r'"(fig\w+\.png)"', f.read()))
 for r in sorted(referenced):
     ok = os.path.exists(os.path.join(FIG, r))
     print(f"   {r:<28} {'OK' if ok else '*** MISSING ***'}")

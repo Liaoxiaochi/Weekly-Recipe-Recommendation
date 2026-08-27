@@ -338,9 +338,13 @@ def fig36():
 
 
 if __name__ == "__main__":
+    # fig35 and fig36 are retired.  The constraint diagram duplicated the
+    # filter-then-rank pipeline of Figure 2.2, and the card sketch duplicated
+    # Figure 4.2, which is a photograph of the interface as built rather than a
+    # drawing of the intention.  Both functions are kept so either can be
+    # restored; their PNGs live in figures/_retired/, which verify_figures.py
+    # does not scan.
     print("Chapter 3 figures:")
     fig31()
     fig33()
     fig34()
-    fig35()
-    fig36()

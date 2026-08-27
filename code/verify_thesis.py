@@ -71,6 +71,26 @@ if ph:
 else:
     print("   clean: no [[CITE]] / [[FIG]] / [[SCREENSHOT]] / [[RESULT]] found")
 
+# The Leeds template marks its own gaps with <...> and dates with xx/xx/xx,
+# which the check above never saw.  On 19 August 2026 that meant the Summary
+# was still the template's instruction to the author -- the first page an
+# examiner reads -- while every check reported the document clean.  Some of
+# those notes run across paragraph boundaries, so the whole document is joined
+# before matching rather than each paragraph being tested on its own.
+joined = alltext
+for _tbl in doc.tables:
+    for _row in _tbl.rows:
+        for _cell in _row.cells:
+            joined += chr(10) + _cell.text
+template = re.findall(r"<[^<>]{4,200}>", joined, re.S)
+template += ["xx/xx/xx"] * joined.count("xx/xx/xx")
+if template:
+    fail.append("Leeds template placeholders remain")
+    for t in template:
+        print("   TEMPLATE REMAINS:", " ".join(t.split())[:88])
+else:
+    print("   clean: no <...> or xx/xx/xx template residue")
+
 print()
 print("=" * 66)
 print("2. FIGURE AND TABLE ORDER")
@@ -227,6 +247,61 @@ else:
     fail.append("Chapter 4 misstates the number of assertion groups")
     print(f"   *** suite has {groups} groups; Chapter 4 does not say "
           f"'{claimed}' ***")
+
+print()
+print("=" * 66)
+print("8. MANDATORY SECTIONS REQUIRED BY THE SCHOOL STRUCTURE DOCUMENT")
+print("=" * 66)
+# WHY THIS EXISTS.  "Structure of MSc Dissertation" prescribes chapter and
+# section titles for each project type and warns that "failure to include a
+# required section or misplacing it can lead to the loss of marks".  For an
+# Exploratory Software project Chapter 3 must be titled "Software Requirements
+# and System Design" and must contain a software requirements section; Chapter
+# 5 must cover software testing; Chapter 6 must draw conclusions; and Section
+# 1.1 must open with the prescribed sentence.
+#
+# The report went through seven checks, four verification suites and a
+# supervisor read-through without the missing requirements section being
+# noticed by any of them, because none of them was looking for it.  This check
+# is here so that the omission cannot recur silently.
+REQUIRED_TITLES = [
+    "Chapter 3 Software Requirements and System Design",
+    "3.1.1  Software Requirements",
+    "3.1.2  Design overview",
+    "Chapter 5 Software Testing and Evaluation",
+    "6.1  Conclusions",
+    "1.1 Project Aim",
+    "1.2 Objectives",
+    "1.3 Deliverables",
+    "1.4 Ethical, Legal, Social and Professional Issues",
+]
+for title in REQUIRED_TITLES:
+    present = any(t.strip() == title for _, t in paras)
+    if present:
+        print(f"   {title:<52} OK")
+    else:
+        fail.append("mandatory section missing: " + title)
+        print(f"   *** {title:<48} ABSENT ***")
+
+# Section 1.1 must START with the prescribed opening, not merely contain the
+# aim somewhere inside it.
+AIM_OPENING = "The aim of this project is to"
+opening = None
+for i, (_, t) in enumerate(paras):
+    if t.strip() == "1.1 Project Aim":
+        for _, nxt in paras[i + 1:]:
+            if nxt.strip():
+                opening = nxt.strip()
+                break
+        break
+if opening is None:
+    fail.append("Section 1.1 has no body text")
+    print("   *** Section 1.1 has no body text ***")
+elif opening.startswith(AIM_OPENING):
+    print(f"   Section 1.1 opens with '{AIM_OPENING} ...'   OK")
+else:
+    fail.append("Section 1.1 does not open with '" + AIM_OPENING + "'")
+    print(f"   *** Section 1.1 opens '{opening[:56]}...' ***")
 
 print()
 print("=" * 66)

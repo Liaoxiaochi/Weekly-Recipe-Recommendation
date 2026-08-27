@@ -177,7 +177,11 @@ def fig54():
     fs.save(fig, "fig54_ceiling_weight.png")
 
 
-FIGURES = {"fig51": fig51, "fig52": fig52, "fig53": fig53, "fig54": fig54}
+# fig52 (the switching bar chart) is retired: Section 5.3 states all four of
+# its numbers in the prose, so the figure only repeated the text.  The function
+# is kept so it can be restored, but it is out of the default set and its PNG
+# lives in figures/_retired/, which verify_figures.py does not scan.
+FIGURES = {"fig51": fig51, "fig53": fig53, "fig54": fig54}
 
 if __name__ == "__main__":
     import sys

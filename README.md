@@ -100,7 +100,9 @@ python code/verify_prototype.py   # 13 groups: corpus contract, fail-closed
                                   # semantics, safety of generated text
 python code/verify_thesis.py      # the chapters against the code
 python code/verify_figures.py     # every figure against the house palette
-python code/shoot.py              # drives a real browser, writes 7 screenshots
+python code/shoot.py              # drives a real browser and photographs it
+python code/page_count.py         # body length against the 60-page limit
+python code/finalise.py           # rebuilds the table of contents to submit
 ```
 
 `verify_prototype.py` and `shoot.py` are complementary and neither replaces the

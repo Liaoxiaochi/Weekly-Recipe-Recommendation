@@ -1,0 +1,24 @@
+Page report for 毕业论文_最新.docx
+==========================================================
+
+Whole document : 78 pages, 27056 words
+
+Section starts (page : heading)
+     3 : Summary
+     4 : Acknowledgements
+     5 : Table of Contents
+     8 : Chapter 1 Introduction
+    11 : Chapter 2 Background Research
+    24 : Chapter 3 Software Requirements and System Design
+    41 : Chapter 4 Implementation
+    52 : Chapter 5 Software Testing and Evaluation
+    64 : Chapter 6 Conclusion and Future Work
+    68 : List of References
+    73 : Appendix A External Materials
+    76 : Appendix B Ethical Issues Addressed
+
+BODY (Chapter 1 .. last page before References)
+  starts on page 8, references begin on page 68
+  body length : 60 pages
+  limit       : 60 pages
+  headroom    : 0 pages remaining

@@ -182,9 +182,25 @@ def _ndcg(hits, n_relevant, k):
     return dcg / ideal if ideal > 0 else 0.0
 
 
-def experiment_ranking():
-    """Top-N ranking for five systems, over two user populations."""
-    section(2, "TOP-N RANKING")
+def experiment_ranking(order_by="latent"):
+    """Top-N ranking for five systems, over two user populations.
+
+    `order_by` selects how the collaborative signal is turned into an ordering.
+    "latent" is what the system deploys, and what Section 3.4.2 specifies:
+    rank by the latent term alone.  "predicted" reproduces the behaviour the
+    component had before the defect of Section 5.3 was found, ranking by the
+    full predicted rating and so, in effect, by item bias.
+
+    The second mode exists because Chapter 5 reports both columns of Table 5.2.
+    Without it the "before" column would be the only set of numbers in the
+    chapter with no stored result behind it -- and a chapter that claims every
+    figure is reproducible cannot carry one that is not.  Both runs use the
+    same seed and therefore the same split, so the columns are comparable.
+    """
+    if order_by not in ("latent", "predicted"):
+        raise ValueError("order_by must be 'latent' or 'predicted'")
+    section(2, "TOP-N RANKING" + ("" if order_by == "latent"
+                                  else "  (pre-correction ordering)"))
     rng = np.random.default_rng(SEED)
     by_user, chosen, train, test, n_eligible = _split_users(rng)
     log(f"   {n_eligible:,} users have >= {MIN_INTERACTIONS} interactions and "
@@ -216,6 +232,7 @@ def experiment_ranking():
     acc_by_pop = {"cold": {s: {f"ndcg@10": []} for s in systems},
                   "warm": {s: {f"ndcg@10": []} for s in systems}}
     switch_choice = Counter()
+    top10_support = {"predicted": [], "latent": []}
 
     for n, u in enumerate(chosen):
         if n and n % 250 == 0:
@@ -231,13 +248,33 @@ def experiment_ranking():
         ranked["random"] = rng.random(len(recipe_ids))
         ranked["popularity"] = popularity.copy()
         ranked["content"] = content.scores(profile)
-        ranked["collaborative"] = cf.scores(profile)
         # The controller's own policy, evaluated as the system would apply it.
         controller = SwitchingController(content, cf)
-        _, why = controller.select(profile)
-        switch_choice["collaborative" if "collaborative" in why
-                      else "content"] += 1
-        ranked["switching"] = controller.scores(profile)
+        chosen_rec, why = controller.select(profile)
+        picked_cf = "collaborative" in why
+        switch_choice["collaborative" if picked_cf else "content"] += 1
+
+        if order_by == "predicted":
+            ranked["collaborative"] = cf.predicted_ratings(profile)
+            # Before the correction the hybrid inherited whatever ordering its
+            # chosen arm produced, so it only differs from the deployed hybrid
+            # on users for whom the controller picks the collaborative arm.
+            ranked["switching"] = (cf.predicted_ratings(profile) if picked_cf
+                                   else controller.scores(profile))
+        else:
+            ranked["collaborative"] = cf.scores(profile)
+            ranked["switching"] = controller.scores(profile)
+
+        if order_by == "predicted":
+            # How concentrated each ordering is on barely-rated recipes: the
+            # mechanism behind the defect, not just its effect on NDCG.
+            for label, vec in (("predicted", cf.predicted_ratings(profile)),
+                               ("latent", cf.scores(profile))):
+                v = np.asarray(vec, dtype=np.float64).copy()
+                v[seen] = -np.inf
+                top10 = np.argsort(-v)[:10]
+                top10_support[label].append(
+                    float(np.median([popularity[r] for r in top10])))
 
         for s in systems:
             score = np.asarray(ranked[s], dtype=np.float64).copy()
@@ -276,8 +313,13 @@ def experiment_ranking():
                               for s, v in d.items() if v["ndcg@10"]}
                           for b, d in acc_by_pop.items()},
     }
-    save("ranking", payload)
-    results["ranking"] = payload
+    if order_by == "predicted":
+        payload["top10_median_ratings"] = {
+            k: float(np.median(v)) for k, v in top10_support.items() if v}
+
+    key = "ranking" if order_by == "latent" else "ranking_before"
+    save(key, payload)
+    results[key] = payload
 
 
 # ===========================================================================
@@ -684,6 +726,7 @@ def experiment_ablation():
 EXPERIMENTS = {
     "rating": experiment_rating,
     "rank": experiment_ranking,
+    "rank_before": lambda: experiment_ranking(order_by="predicted"),
     "nutrition": experiment_nutrition,
     "diversity": experiment_diversity,
     "sensitivity": experiment_sensitivity,

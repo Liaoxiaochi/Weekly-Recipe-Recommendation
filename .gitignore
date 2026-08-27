@@ -18,3 +18,8 @@ _存档/
 # Large generated artefacts that any clone can regenerate.
 code/outputs/*.csv
 code/outputs/shoot_server.log
+
+# The packaged deliverable, built by code/package.py from the working tree.
+# It is a build product, and committing it would also place a second copy of
+# every source file in the repository.
+*.zip

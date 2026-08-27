@@ -5,9 +5,19 @@ anchor found: 'List of References'
   renumbered: Table 2.2  Comparison of the main recipe-recom...
 
 --- Chapter 2: cross-references ---
-  added: Figure 2.1 sets out the resulting taxonomy of approaches ...
+  added: Figure 2.1 sets out the resulting taxonomy of approaches....
   added: Representative systems from each method family are summar...
   added: Table 2.2 compares the method families discussed in this ...
+
+--- Chapter 1: corrections and additions to Section 1.4 ---
+  corrected: ...1.4 Ethical, Legal, Social and Professional Issues	2...
+  corrected: ...The aim of this project is to design and implement a personalise...
+  corrected: ...This project addresses that gap. The proposed system distinguish...
+  corrected: ...1.4 Ethical, Legal, Social and Professional Issues...
+  4 paragraph(s) corrected
+  inserted 1 paragraph(s)
+  inserted 2 paragraph(s)
+  3 paragraph(s) added to Section 1.4
 
 --- Chapter 1: USDA wording ---
   reworded: ...Curate a cleaned recipe corpus from the Food.com dataset, augmented wi...
@@ -15,12 +25,53 @@ anchor found: 'List of References'
   reworded: ...The system produces meal suggestions, not clinical advice. Each recomm...
   3 paragraph(s) changed
 
+--- Chapter 1: labelling the objectives and deliverables ---
+  8 item(s) labelled O1-O4 / D1-D4 and indented
+
 --- Chapter 3: inserting blocks ---
-  blocks inserted: algo=1, eq=1, figurecaption=16, h1=3, h2=26, h3=21, image=16, p=126, table=9, tablecaption=9
+  blocks inserted: eq=3, figurecaption=10, h1=4, h2=30, h3=22, image=10, p=158, table=6, tablecaption=6
+
+--- Chapter 2: expanding the literature review ---
+  5 paragraph(s) rewritten
+   2 block(s) after  'justify the methodological choices implemented...'
+   2 block(s) before 'Two features distinguish recipe recommendation...'
+   1 block(s) before 'Longitudinal planning also brings constraint h...'
+   1 block(s) after  'replaces hand-crafted ingredient features with...'
+   1 block(s) after  'anticipate the hybrid direction developed in S...'
+   1 block(s) after  'they are revisited only as future-work directi...'
+   2 block(s) after  'which guards against degenerate recommendation...'
+  10 block(s) before '2.4 Choice of Methods...'
+   1 block(s) after  'The concrete algorithms, scoring function and ...'
+  21 block(s) added to Chapter 2
+  removed signposting paragraph: This chapter establishes the empirical, behavioural ...
+  1 paragraph(s) removed from Chapter 2
+  3 row(s) appended to Table 2.1 (now 12 rows)
 
 --- References ---
   last existing entry: [27]  Rostami, M., Farrahi, V., Ahmadian, S....
-  appended [28]..[37] (10 entries)
+  appended [28]..[50] (23 entries)
+
+--- Front matter: title page, Summary, Acknowledgements ---
+  filled in: 2025/2026
+  filled in: © 2026 The University of Leeds and Xiaochi Liao
+  2 placeholder(s) filled
+  removed template note: <As an example>...
+  removed template note: <Reminder about basic requirements of layout and for...
+  removed template note: The report must be in typescript, sequentially page ...
+  removed template note: Page Numbering: The pages preceding the body of the ...
+  removed template note: Length: The main body of a 60 credit project report...
+  removed template note: Note that it is not acceptable to solicit assistance...
+  6 template instruction paragraph(s) removed
+  wrote 4 paragraph(s) over: <Concise statement of the problem you intend...
+  wrote 1 paragraph(s) over: <This page should contain any acknowledgemen...
+  deliverables table rebuilt: 5 rows -> 3 (consent-forms row removed)
+
+--- Appendices: replacing the template placeholder text ---
+  Appendix A: removed 7 placeholder paragraph(s), inserted 13 block(s)
+  Appendix B: removed 3 placeholder paragraph(s), inserted 13 block(s)
+
+--- Captions: set to body size ---
+  26 caption run(s) set to 11pt
 
 saved: 毕业论文_v5.docx   (versioned, for rollback)
        毕业论文_最新.docx   <-- OPEN THIS ONE

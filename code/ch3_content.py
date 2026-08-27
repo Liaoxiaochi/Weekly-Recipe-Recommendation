@@ -19,35 +19,60 @@ and are assigned in order of first appearance.
 BLOCKS = [
 
 # ===========================================================================
-("h1", "Chapter 3 System Design"),
+("h1", "Chapter 3 Software Requirements and System Design"),
 
-("p", "This chapter sets out the design of the system. It describes what the "
-      "system has to produce, how it is put together, and how each part of "
-      "it works. The sections that follow take the design in the order the "
-      "system itself runs, from the data it starts with through to what the "
-      "user finally sees."),
+("p", "This chapter sets out what the system has to do and how it is built "
+      "to do it. Section 3.1 states the requirements and gives an overview "
+      "of the design that follows from them. The remaining sections take "
+      "the design in the order the system itself runs, from the data it "
+      "starts with through to what the user finally sees."),
 
 # ---------------------------------------------------------------------------
-("h2", "3.1  Design Overview"),
+("h2", "3.1  Requirements and Design Overview"),
+
+("h3", "3.1.1  Software Requirements"),
 
 ("p", "The system takes a user profile describing preferences, dietary "
       "restrictions and body data, and returns a seven-day menu of "
-      "twenty-one meals. That menu must respect every declared restriction, "
-      "move the user towards their daily nutritional targets, distinguish "
-      "weekdays from weekends, and remain adjustable once presented. The "
-      "objectives in Section 1.2 set these obligations; the sections below "
-      "state how each is met."),
+      "twenty-one meals. The objectives in Section 1.2 set four functional "
+      "requirements on that menu, each of which is the obligation of a "
+      "later section of this chapter:"),
 
-("p", "Three principles govern the design. Safety takes precedence over "
-      "preference: an allergen, religious or clinical constraint removes a "
-      "recipe entirely, and no preference score can reinstate it. The system "
-      "must be interpretable, so the scoring function is a weighted sum of "
-      "named terms rather than a single opaque prediction. And the prototype "
-      "must run unaided on a standard laptop, which rules out the graph and "
-      "multimodal methods reviewed in Section 2.2.3 and favours models whose "
-      "expensive components can be computed once, offline, and reused."),
+("p", "FR1  Every declared restriction must be respected. An allergen, a "
+      "religious rule or a clinical exclusion removes a recipe from "
+      "consideration entirely (Section 3.5)."),
 
-("p", "These principles produce the four-layer architecture shown in "
+("p", "FR2  The menu must move the user towards their daily nutritional "
+      "targets, which are derived from the anthropometric data in the "
+      "profile rather than fixed in advance (Sections 3.3 and 3.5)."),
+
+("p", "FR3  Weekdays must be distinguished from weekends, because "
+      "preparation time available on the two differs (Section 3.6.4)."),
+
+("p", "FR4  The menu must remain adjustable once presented. A user who "
+      "rejects a dish must be able to replace it without discarding the "
+      "rest of the week (Section 3.6.3)."),
+
+("p", "Three non-functional requirements constrain how those four may be "
+      "met, and they govern the design as a whole:"),
+
+("p", "NFR1  Safety takes precedence over preference. No preference score "
+      "may reinstate a recipe that a hard constraint has removed, and the "
+      "filter errs towards exclusion where the data is ambiguous."),
+
+("p", "NFR2  The system must be interpretable. The scoring function is a "
+      "weighted sum of named terms rather than a single opaque prediction, "
+      "so that the reason for placing or withholding a dish can be shown "
+      "to the user."),
+
+("p", "NFR3  The prototype must run unaided on a standard laptop. This "
+      "rules out the graph and multimodal methods reviewed in Section "
+      "2.2.3 and favours models whose expensive components can be computed "
+      "once, offline, and reused."),
+
+("h3", "3.1.2  Design overview"),
+
+("p", "These requirements produce the four-layer architecture shown in "
       "Figure 3.1: a data layer holding the cleaned corpus and its derived "
       "attributes, a model layer holding the two recommenders and the "
       "switching controller, an application layer in which the weekly planner "
@@ -57,7 +82,7 @@ BLOCKS = [
       "recommenders can be replaced during evaluation without disturbing the "
       "planner or the interface."),
 
-("image", "fig31_architecture.png", 6.1),
+("image", "fig31_architecture.png", 4.5),
 ("figurecaption", "Figure 3.1  Layered architecture of the proposed system."),
 
 # ---------------------------------------------------------------------------
@@ -67,44 +92,37 @@ BLOCKS = [
       "corpus it ranks. This section specifies the pipeline that turns the "
       "raw Food.com export into a corpus with per-serving nutrition in "
       "grams, ingredient-level allergen tags and a meal slot for every "
-      "recipe. Figure 3.3 shows the six stages and the quantities that "
+      "recipe. Figure 3.2 shows the six stages and the quantities that "
       "survive each of them."),
 
 ("h3", "3.2.1  Source corpus"),
 
 ("p", "The system is built on the Food.com dataset released by Majumder et "
-      "al. [28], which collects recipes and user interactions spanning "
-      "eighteen years of the site. The two raw files used here are "
-      "RAW_recipes.csv, containing 231,637 recipes, and "
-      "RAW_interactions.csv, containing 1,132,367 ratings from 226,570 "
-      "users. The figures of roughly 180,000 recipes and 700,000 "
-      "interactions usually quoted for this dataset refer to the filtered "
-      "subset the original authors prepared for their generation "
-      "experiments; the present work starts from the unfiltered files and "
-      "applies its own cleaning rules, so the corpus sizes reported here are "
-      "not directly comparable with those in [28]."),
+      "al. [41], spanning eighteen years of the site. The raw files used are "
+      "RAW_recipes.csv, with 231,637 recipes, and RAW_interactions.csv, with "
+      "1,132,367 ratings from 226,570 users. The figures usually quoted "
+      "for this dataset refer to the filtered subset its authors prepared "
+      "for their generation experiments; this work starts from the "
+      "unfiltered files, so the corpus sizes here are not directly "
+      "comparable with those in [41]."),
 
-("p", "Each recipe record carries a name, a preparation time in minutes, an "
-      "ingredient list, user-contributed free-text tags, preparation steps "
-      "and a seven-element nutrition tuple; each interaction record is a "
-      "user, a recipe, a date and an integer rating. The pipeline retains "
-      "all of these and derives four further attributes from them: "
-      "normalised ingredient identifiers, per-serving nutrition in grams, a "
-      "set of allergen labels, and a meal slot. Two things the corpus does "
-      "not carry shape the interface design in Section 3.7.2: any image of "
-      "the finished dish, and any quantity. An ingredient list is a list of "
-      "names, so a record states that a recipe uses honey and butter but not "
-      "how much of either, and no quantity information exists elsewhere in "
-      "the release. A recipe here can therefore be screened, scored and "
-      "scheduled, which is what this system does with it, but it cannot be "
-      "cooked from; the interface links each dish to its page on the source "
-      "site, which supplies the quantities and is also the attribution the "
-      "dataset's terms deserve. Using the nutrition values already present in "
-      "the corpus, rather than joining to an external food-composition "
-      "database, is a recorded design decision: the per-serving values are "
-      "complete for every recipe, and ingredient-level matching to an "
-      "external source would consume effort better spent on the "
-      "recommendation and evaluation objectives."),
+("p", "Each recipe record carries a name, a preparation time, an ingredient "
+      "list, tags, preparation steps and a seven-element nutrition tuple; "
+      "each interaction is a user, a recipe, a date and a rating. The "
+      "pipeline retains these and derives four attributes: normalised "
+      "ingredient identifiers, per-serving nutrition in grams, allergen "
+      "labels, and a meal slot. Two absences shape the interface of Section "
+      "3.7.2: the corpus holds no image of the finished dish, and no "
+      "quantities. An ingredient list is a list of names, so a record states "
+      "that a recipe uses honey and butter but not how much of either. A "
+      "recipe here can be screened, scored and scheduled, which is what this "
+      "system does, but not cooked from; the interface links each dish to "
+      "its source page, which supplies the quantities and is also the "
+      "attribution the dataset's terms deserve. Using the corpus's own "
+      "nutrition values rather than joining to an external food-composition "
+      "database is a recorded design decision: they are complete for every "
+      "recipe, and ingredient-level matching would cost effort better spent "
+      "on the recommendation and evaluation objectives."),
 
 ("h3", "3.2.2  Cleaning rules"),
 
@@ -134,65 +152,45 @@ BLOCKS = [
 ("p", "The nutrition tuple requires care, because only its first element is "
       "an absolute quantity. Energy is given in kilocalories per serving, "
       "but total fat, sugar, sodium, protein, saturated fat and carbohydrate "
-      "are expressed as percentages of a daily value, the reference "
-      "quantities used on United States nutrition labels [29]. This is how "
-      "the figures are presented on the site itself, as Figure 3.2 shows. A "
-      "percentage cannot be aggregated across a day's meals or compared "
-      "against a personalised target, so the six percentage fields are "
-      "converted to mass using the reference values in Table 3.1."),
+      "are each expressed as a percentage of a daily value, the reference "
+      "quantities used on United States nutrition labels [42]. A percentage "
+      "cannot be added across a day's meals, nor compared against a target "
+      "derived from a particular person's body, so all six fields must be "
+      "converted to mass before anything else in this system can use them."),
 
-("image", "fig32_foodcom_nutrition.png", 2.9),
-("figurecaption", "Figure 3.2  Nutrition panel published for recipe 61040, "
-                  "20 Minute Chicken Parmesan, which is a member of the "
-                  "corpus used here. Every nutrient except energy is "
-                  "reported as a percentage of a daily value alongside its "
-                  "mass, and it is the percentage that the dataset records. "
-                  "Source: food.com, accessed 14 August 2026."),
+("p", "That the corpus stores the percentage rather than the mass has to be "
+      "established rather than assumed, because the originating site "
+      "publishes both and the dataset documentation does not say which was "
+      "captured. For recipe 61040 the stored tuple gives 24.0, 24.0, 33.0, "
+      "66.0, 36.0 and 6.0 for fat, sugars, sodium, protein, saturated fat "
+      "and carbohydrate, while the panel published for it reports those same "
+      "six as 15.8 g, 6 g, 807.8 mg, 33.5 g, 7.4 g and 18.7 g, and as 24, "
+      "24, 33, 66, 36 and 6 per cent of a daily value (food.com, accessed 14 "
+      "August 2026). Every stored value matches the percentage and none the "
+      "mass. Sodium settles it without the panel at all: a stored 33 cannot "
+      "be grams, since that quantity of sodium would be fatal, whereas 33 "
+      "per cent of a 2,400 mg reference is 792 mg."),
 
-("tablecaption", "Table 3.1  Conversion of the nutrition tuple to absolute "
-                 "quantities per serving."),
-("table", [
-    ["Element", "Encoding in the corpus", "Reference value [29]", "Conversion"],
-    ["Energy", "kcal per serving", "not applicable", "used unchanged"],
-    ["Total fat", "per cent of daily value", "65 g", "g = pdv / 100 x 65"],
-    ["Sugar", "per cent of daily value", "25 g", "g = pdv / 100 x 25"],
-    ["Sodium", "per cent of daily value", "2,400 mg", "mg = pdv / 100 x 2400"],
-    ["Protein", "per cent of daily value", "50 g", "g = pdv / 100 x 50"],
-    ["Saturated fat", "per cent of daily value", "20 g", "g = pdv / 100 x 20"],
-    ["Carbohydrate", "per cent of daily value", "300 g", "g = pdv / 100 x 300"],
-]),
+("p", "Conversion is therefore a multiplication by the reference quantity "
+      "for each nutrient: 65 g of total fat, 25 g of sugars, 2,400 mg of "
+      "sodium, 50 g of protein, 20 g of saturated fat and 300 g of "
+      "carbohydrate. Energy is carried through unchanged. Five of those "
+      "six are the values in force before the 2016 revision of the United "
+      "States labelling rules, which is consistent with the period over "
+      "which the corpus was collected, and dividing each published mass by "
+      "its published percentage recovers them to within the rounding of the "
+      "printed figures."),
 
-("p", "That the corpus records the percentage and not the mass is worth "
-      "establishing rather than asserting, because the panel in Figure 3.2 "
-      "publishes both and a reader has no way to tell from the figure alone "
-      "which of the two was captured. For the recipe shown there the corpus "
-      "stores 24.0, 24.0, 33.0, 66.0, 36.0 and 6.0 for fat, sugars, sodium, "
-      "protein, saturated fat and carbohydrate. The panel reports those same "
-      "six nutrients as 15.8 g, 6 g, 807.8 mg, 33.5 g, 7.4 g and 18.7 g, and "
-      "as 24, 24, 33, 66, 36 and 6 per cent of a daily value. Every stored "
-      "value matches the percentage exactly and none matches the mass. "
-      "Sodium settles the question on its own: a stored value of 33 cannot "
-      "be a mass in grams, since that quantity of sodium would be fatal, "
-      "whereas 33 per cent of the 2,400 mg reference is 792 mg, which is the "
-      "figure the panel prints."),
-
-("p", "The same panel fixes the reference values themselves, since dividing "
-      "each published mass by its published percentage recovers the quantity "
-      "the site divided by: 65.8 g of fat, 2,448 mg of sodium, 50.8 g of "
-      "protein, 20.6 g of saturated fat and 311.7 g of carbohydrate, "
-      "matching Table 3.1 to within the rounding of the printed figures. "
-      "Five of the six values are those in force before the 2016 "
-      "revision of the United States labelling rules, consistent with the "
-      "period over which the corpus was collected. The "
-      "sixth is a different case: the pre-2016 label carried no reference "
-      "quantity for sugars at all, so the site must apply one of its own. "
-      "Dividing the published mass by the published percentage gives 25 g, "
-      "and that figure is corroborated corpus-wide by the fact that sugars "
-      "are a component of total carbohydrate and cannot exceed it in mass. "
-      "At 25 g the constraint is violated by 6.1 per cent of recipes and "
-      "never by more than 6 g, the scale of the rounding in the source data; "
-      "at 50 g it is violated by 40.1 per cent of recipes and by as much as "
-      "479 g, which is not credible. The 25 g value is therefore adopted. "
+("p", "Sugars are the exception and needed separate treatment, because the "
+      "pre-2016 label carried no reference quantity for them at all. The "
+      "site must therefore apply a figure of its own, and that figure can be "
+      "recovered from the data rather than guessed. Sugars are a component "
+      "of total carbohydrate and cannot exceed it in mass, which gives a "
+      "test that every recipe in the corpus must pass. At a reference of "
+      "25 g the constraint is violated by 6.1 per cent of recipes and never "
+      "by more than 6 g, which is the scale of the rounding in the source "
+      "data. At 50 g it is violated by 40.1 per cent of recipes and by as "
+      "much as 479 g, which is not credible. The 25 g value is adopted. "
       "Section 4.2 reports an independent check of the conversion as a "
       "whole."),
 
@@ -206,22 +204,23 @@ BLOCKS = [
       "anchovy, pesto contains pine nuts, and most soy sauce contains wheat, "
       "yet none of those strings contains the words fish, nut or wheat."),
 
-("p", "The design responds with a lexicon organised in three layers, applied "
-      "over the fourteen classes that European food information law requires "
-      "to be declared [30]. The first layer matches the allergen itself. The "
-      "second matches synonyms and derivatives sharing no substring with the "
-      "class name, such as groundnut for peanut, casein and whey for milk, "
-      "semolina and spelt for gluten, and tahini for sesame. The third "
-      "matches named foods that reliably contain the allergen without naming "
-      "it. The ingredient map distributed with the corpus resolves 99.81 per "
-      "cent of ingredient occurrences to a canonical form; it supplies the "
-      "vocabulary of Section 3.4.1, and the residue it cannot resolve defines "
-      "the fail-closed exclusion of Section 3.5.1. It is deliberately not "
-      "applied before allergen matching, for a reason given in Section "
-      "4.2."),
+("p", "The design responds with a lexicon of three layers, applied over the "
+      "fourteen classes European food information law requires to be "
+      "declared [43]. The first matches the allergen itself; the second "
+      "matches synonyms and derivatives sharing no substring with the class "
+      "name, such as groundnut for peanut, casein and whey for milk, "
+      "semolina for gluten and tahini for sesame; the third matches named "
+      "foods that reliably contain the allergen without naming it. The "
+      "ingredient map distributed with the corpus resolves 99.81 per cent of "
+      "ingredient occurrences to a canonical form, supplying the vocabulary "
+      "of Section 3.4.1, while the residue it cannot resolve is excluded "
+      "rather than admitted. That is the fail-closed rule of Section 3.5.1: "
+      "where the evidence is insufficient to decide, the recipe is "
+      "removed. It is deliberately not applied "
+      "before allergen matching, for a reason given in Section 4.2."),
 
-("p", "Table 3.2 reports how many recipes each class flags and how the flags "
-      "distribute across the layers. The third layer is not a refinement but "
+("p", "Appendix A.2 lists the fourteen classes with a representative "
+      "composite rule and the number of recipes each flags. The third layer is not a refinement but "
       "the substance of the method: of the 121,830 recipes flagged for "
       "gluten, 102,939 are flagged only by a composite rule, as are every "
       "one of the 41,737 sulphite flags. A lexicon restricted to direct and "
@@ -237,32 +236,10 @@ BLOCKS = [
       "phrases are blanked out of the ingredient text before matching. A "
       "phrase qualifies only if it never carries the allergen; one that "
       "merely usually lacks it is excluded, because the fail-closed policy "
-      "prefers an unnecessary exclusion to a missed one. The counts in Table "
-      "3.2 are those of the revised lexicon, whose derivation is described "
-      "in Section 4.2 and whose error rate is measured in Chapter 5."),
+      "prefers an unnecessary exclusion to a missed one. The counts reported "
+      "are those of the revised lexicon, whose derivation is described in "
+      "Section 4.2 and whose error rate is measured in Chapter 5."),
 
-("tablecaption", "Table 3.2  Allergen classes of Annex II to Regulation (EU) "
-                 "No 1169/2011 [30], with a representative composite rule "
-                 "and the number of recipes flagged in the raw corpus of "
-                 "231,637."),
-("table", [
-    ["Class", "Representative composite rule", "Recipes flagged",
-     "Flagged only by a composite rule"],
-    ["Cereals containing gluten", "bread, pasta, soy sauce, beer", "121,830", "102,939"],
-    ["Milk", "parmesan, chocolate, pesto, ranch dressing", "144,197", "55,772"],
-    ["Eggs", "mayonnaise, hollandaise, custard, brioche", "74,751", "19,043"],
-    ["Soybeans", "soy sauce, teriyaki, margarine, lecithin", "40,724", "37,995"],
-    ["Sulphur dioxide and sulphites", "wine, vinegar, dried fruit", "41,737", "41,737"],
-    ["Celery", "stock cube, bouillon, mirepoix", "35,151", "22,442"],
-    ["Mustard", "salad dressing, barbecue sauce, curry powder", "31,829", "18,931"],
-    ["Tree nuts", "pesto, baklava, granola, marzipan", "31,647", "1,322"],
-    ["Fish", "Worcestershire sauce, Caesar dressing, tapenade", "17,911", "10,073"],
-    ["Sesame seeds", "hummus, halva, za'atar", "15,278", "1,239"],
-    ["Peanuts", "satay sauce, kung pao", "7,530", "25"],
-    ["Crustaceans", "seafood mix, shrimp paste, surimi", "6,938", "296"],
-    ["Molluscs", "oyster sauce, seafood mix", "2,861", "1,083"],
-    ["Lupin", "none observed", "0", "0"],
-]),
 
 ("p", "Two limits of the method shape the interface design in Section 3.7.2 "
       "and the evaluation in Chapter 5. First, the composite layer is "
@@ -289,8 +266,8 @@ BLOCKS = [
       "consequence, such as identifying the 35,651 vegetarian and 10,012 "
       "vegan recipes."),
 
-("image", "fig33_data_pipeline.png", 5.6),
-("figurecaption", "Figure 3.3  The data preparation pipeline, with the "
+("image", "fig33_data_pipeline.png", 4.3),
+("figurecaption", "Figure 3.2  The data preparation pipeline, with the "
                   "quantity of data surviving each stage. Counts are "
                   "produced by the profiling script described in Section "
                   "4.2 and are reproducible from the raw files."),
@@ -301,7 +278,7 @@ BLOCKS = [
 ("h3", "3.3.1  Profile representation"),
 
 ("p", "A user profile has three parts. Restrictions are the hard part: "
-      "allergen classes drawn from the fourteen in Table 3.2, an optional "
+      "allergen classes drawn from the fourteen of Annex II, an optional "
       "dietary regime such as vegetarian, vegan or halal, and a free list of "
       "ingredients the user will not eat. Preferences are the soft part: "
       "liked and disliked ingredients and cuisines, plus any ratings given "
@@ -315,45 +292,43 @@ BLOCKS = [
 ("h3", "3.3.2  Deriving daily nutritional targets"),
 
 ("p", "Daily energy requirement is estimated in two steps. Basal metabolic "
-      "rate is computed with the Mifflin-St Jeor equation [31], which was "
+      "rate is computed with the Mifflin-St Jeor equation [44], which was "
       "derived on a healthy adult sample and is the predictive equation most "
-      "commonly recommended for adults without a clinical condition. Total "
-      "energy expenditure is then obtained by scaling basal metabolic rate "
-      "by a physical activity level, following the factorial approach used "
-      "to set the United Kingdom dietary reference values for energy [32]. "
-      "The equations and the activity bands offered by the interface are "
-      "given in Table 3.3; the four bands are a design choice, chosen to "
-      "span the range of ordinary adult activity while keeping the form "
-      "simple enough for a user to answer honestly."),
+      "commonly recommended for adults without a clinical condition. Writing "
+      "w for body mass in kilograms, h for height in centimetres and a for "
+      "age in years, it takes one of two forms according to sex:"),
 
-("tablecaption", "Table 3.3  Derivation of daily energy and macronutrient "
-                 "targets from profile data."),
-("table", [
-    ["Quantity", "Definition", "Source"],
-    ["Basal metabolic rate, men",
-     "BMR = 10w + 6.25h - 5a + 5   (w in kg, h in cm, a in years)", "[31]"],
-    ["Basal metabolic rate, women", "BMR = 10w + 6.25h - 5a - 161", "[31]"],
-    ["Total energy expenditure", "TEE = BMR x PAL", "[32]"],
-    ["Physical activity level",
-     "1.4 inactive, 1.6 lightly active, 1.75 active, 1.9 very active",
-     "Design choice, band structure after [32]"],
-    ["Total fat", "at most 35 per cent of food energy", "[33]"],
-    ["Saturated fat", "at most 11 per cent of food energy", "[33]"],
-    ["Carbohydrate", "approximately 50 per cent of food energy", "[33]"],
-    ["Free sugars", "at most 5 per cent of food energy", "[33]"],
-    ["Protein", "0.75 g per kg of body weight per day", "[33]"],
-    ["Salt", "at most 6 g per day, equivalent to 2.4 g sodium", "[33]"],
-]),
+("eq", "BMR = 10w + 6.25h - 5a + 5      (men)"),
+("eq", "BMR = 10w + 6.25h - 5a - 161      (women)"),
 
-("p", "Macronutrient targets are expressed as proportions of food energy "
-      "following the United Kingdom government dietary recommendations [33], "
-      "not the United States reference values used to decode the corpus in "
-      "Section 3.2.3. The distinction is deliberate: the American values are "
-      "a decoding key, needed because that is how the source data was "
-      "encoded, whereas the British values define what the system steers the "
-      "user towards. Protein is the exception, specified per kilogram of "
-      "body weight rather than as a share of energy, and is converted to a "
-      "daily mass before use."),
+("p", "Total energy expenditure is then obtained by scaling that quantity by "
+      "a physical activity level, following the factorial approach used to "
+      "set the United Kingdom dietary reference values for energy [45], so "
+      "that TEE = BMR x PAL. The interface offers four bands: 1.4 for "
+      "inactive, 1.6 for lightly active, 1.75 for active and 1.9 for very "
+      "active. The band structure follows [45], but the choice of four is a "
+      "design decision: it spans the range of ordinary adult activity while "
+      "keeping the question simple enough that a user can answer it "
+      "honestly, which matters more here than a finer gradation would, since "
+      "the input is self-reported."),
+
+("p", "Macronutrient targets are then expressed as proportions of that daily "
+      "food energy, following the United Kingdom government dietary "
+      "recommendations [46]: at most 35 per cent from total fat, at most 11 "
+      "per cent from saturated fat, approximately 50 per cent from "
+      "carbohydrate and at most 5 per cent from free sugars, with salt held "
+      "at or below 6 g per day, equivalent to 2.4 g of sodium. Protein is "
+      "the exception, specified in the same source as 0.75 g per kilogram of "
+      "body weight per day rather than as a share of energy, and is "
+      "converted to a daily mass before use."),
+
+("p", "These are British reference values, whereas the figures used to "
+      "decode the corpus in Section 3.2.3 are American. The distinction is "
+      "deliberate rather than an inconsistency. The American values are a "
+      "decoding key, needed only because that is how the source data was "
+      "encoded; the British values define what the system steers a user "
+      "towards, and are the appropriate standard for the population this "
+      "work is written for."),
 
 ("h3", "3.3.3  Cold start"),
 
@@ -375,29 +350,27 @@ BLOCKS = [
 
 ("p", "The content-based recommender represents each recipe as a sparse "
       "vector over a vocabulary of normalised ingredients and corpus tags, "
-      "weighted by term frequency-inverse document frequency [34]. The "
-      "inverse document frequency term is what makes the representation "
-      "useful here: salt, water and butter appear in a large fraction of the "
-      "corpus and carry almost no preference information, whereas a "
-      "distinctive ingredient identifies a style of cooking efficiently. A "
-      "user is represented in the same space by the rating-weighted mean of "
-      "the recipes in their history, and candidates are ranked by cosine "
-      "similarity to that vector. The weights are taken relative to the "
-      "midpoint of the rating scale rather than raw, so that a rating below "
-      "the midpoint moves the user vector away from that recipe. Raw weights "
-      "would make every rating positive, and a recipe the user had just "
-      "marked one star would still be pulled towards, which is the opposite "
-      "of what the rating expresses. Two properties matter for the design: the "
-      "component scores recipes that no one has ever rated, and it composes "
-      "cleanly with the hard filter, since removing recipes from the "
-      "candidate set does not alter the scores of those that remain."),
+      "weighted by term frequency-inverse document frequency [47]. The "
+      "inverse document frequency term is what makes this useful: salt and "
+      "butter appear in much of the corpus and carry almost no preference "
+      "information, whereas a distinctive ingredient identifies a style of "
+      "cooking efficiently. A user is represented in the same space "
+      "by the rating-weighted mean of their history, and candidates ranked "
+      "by cosine similarity to it. Weights are taken relative to the "
+      "midpoint of the rating scale rather than raw, so a rating below the "
+      "midpoint moves the user vector away from that recipe; raw weights "
+      "would make every rating positive, pulling the vector towards a dish "
+      "just marked one star. Two properties matter for the design: the "
+      "component scores recipes nobody has rated, and it composes cleanly "
+      "with the hard filter, since removing candidates does not alter the "
+      "scores of those that remain."),
 
 ("h3", "3.4.2  Collaborative component"),
 
 ("p", "The collaborative recommender factorises the user-recipe rating "
       "matrix into latent factors using truncated singular value "
       "decomposition with stochastic gradient descent, in the form that has "
-      "become the standard baseline for rating prediction [35]. It "
+      "become the standard baseline for rating prediction [48]. It "
       "predicts a rating as the sum of a global mean, a user bias, an item "
       "bias and the inner product of the user and item factor vectors. "
       "Its attraction is that it can capture preference structure that no "
@@ -437,11 +410,11 @@ BLOCKS = [
 
 ("p", "Switching is the hybrid strategy in which a single recommender is "
       "selected per request according to a criterion evaluated at that "
-      "moment, rather than combining several recommenders' outputs [36]. "
+      "moment, rather than combining several recommenders' outputs [49]. "
       "The criterion adopted here is the size of the user's interaction "
       "history: the collaborative component is used when the user has at "
       "least N interactions and the content-based component otherwise, as "
-      "shown in Figure 3.4. Both branches then pass through a context "
+      "shown in Figure 3.3. Both branches then pass through a context "
       "adjustment for the day being planned before the result reaches the "
       "constraint engine."),
 
@@ -460,8 +433,8 @@ BLOCKS = [
       "pure collaborative system would have nothing to offer those users at "
       "all. The sensitivity of the results to N is examined in Chapter 5."),
 
-("image", "fig34_interactions.png", 5.8),
-("figurecaption", "Figure 3.4  Proportion of Food.com users with at least N "
+("image", "fig34_interactions.png", 4.4),
+("figurecaption", "Figure 3.3  Proportion of Food.com users with at least N "
                   "rated recipes. The curve collapses immediately: whatever "
                   "threshold is chosen, the collaborative branch serves a "
                   "small minority."),
@@ -475,7 +448,8 @@ BLOCKS = [
       "before any preference score is computed, the arrangement formalised "
       "in the Diet4You menu planner [16] and adopted here for the reasons "
       "given in Section 2.2.4. Four categories are treated as hard, and are "
-      "shown against the soft categories in Figure 3.5. Three of them are "
+      "distinguished from the soft categories of Section 3.5.2. Three of "
+      "them are "
       "familiar: declared allergens, religious or ethical rules, and "
       "clinical exclusions. The fourth is a consequence of the tagging "
       "limits described in Section 3.2.4."),
@@ -527,8 +501,8 @@ BLOCKS = [
       "be displayed alongside a recommendation, which is what requirement N2 "
       "asks for."),
 
-("p", "The M term distinguishes between the two kinds of quantity Table 3.3 "
-      "sets out, because the guidance does. Protein and carbohydrate are "
+("p", "The M term distinguishes between the two kinds of quantity Section "
+      "3.3.2 sets out, because the guidance does. Protein and carbohydrate are "
       "amounts to reach and are penalised for deviation in either direction; "
       "fat, saturated fat, free sugars and salt are ceilings not to exceed and "
       "are penalised only for exceedance, so nothing pushes a plan to eat up "
@@ -585,15 +559,8 @@ BLOCKS = [
       "could not fill and why. Returning a plan with a gap in it is a worse "
       "user experience than returning a full one, and it is the correct "
       "behaviour: the alternative is to present the user with a meal the "
-      "system has reason to believe they cannot safely eat. The whole "
-      "arrangement is shown in Figure 3.5."),
+      "system has reason to believe they cannot safely eat."),
 
-("image", "fig35_constraints.png", 6.0),
-("figurecaption", "Figure 3.5  Constraint handling in three stages. Hard "
-                  "constraints filter the candidate set, soft constraints "
-                  "penalise within it, and relaxation loosens only the soft "
-                  "stage. The allergen filter lies outside the scope of "
-                  "relaxation entirely."),
 
 # ---------------------------------------------------------------------------
 ("h2", "3.6  Weekly Plan Generation"),
@@ -601,7 +568,9 @@ BLOCKS = [
 ("h3", "3.6.1  Problem formulation"),
 
 ("p", "A weekly plan is an assignment of one recipe to each of twenty-one "
-      "slots, being three meals on each of seven days. Two things must hold "
+      "slots, a slot being one meal on one day: breakfast, lunch or dinner "
+      "on each of the seven days. The word is used in that sense "
+      "throughout. Two things must hold "
       "for a slot to be fillable: the corpus must contain recipes "
       "appropriate to that meal, and each slot must carry its own share of "
       "the daily energy target. Neither is given by the source data, so both "
@@ -610,20 +579,18 @@ BLOCKS = [
 ("p", "Meal appropriateness is derived from the course tags contributed by "
       "the site's users. Desserts, beverages, condiments, sauces and "
       "preserves are excluded as accompaniments rather than meals; of the "
-      "remainder, tags such as breakfast and brunch map to breakfast, "
-      "sandwiches and soups to lunch, and main-dish, meat and seafood to "
-      "dinner. This resolves 56.75 per cent of the raw corpus to at least one "
-      "slot, leaving 19,919 breakfast, 40,779 lunch and 103,389 dinner "
-      "recipes after the other cleaning rules. Breakfast is much the "
-      "thinnest; the imbalance is reported because it constrains how much "
-      "variety the planner can offer at breakfast relative to dinner. Recipes "
+      "remainder, breakfast and brunch map to breakfast, sandwiches and soups "
+      "to lunch, and main-dish, meat and seafood to dinner. This resolves "
+      "56.75 per cent of the raw corpus to at least one slot, leaving 19,919 "
+      "breakfast, 40,779 lunch and 103,389 dinner recipes after the other "
+      "cleaning rules. Breakfast is much the thinnest, which constrains how "
+      "much variety the planner can offer there relative to dinner. Recipes "
       "with no usable course tag are removed by the last cleaning rule of "
       "Section 3.2.2, the largest single reduction in the pipeline, but not "
       "all of them leave the system: 13,341 of the 94,256 removed are tagged "
-      "as something served beside a meal rather than as one, and these form "
-      "the accompaniment pool. The pool is disjoint from the main corpus, so "
-      "no dish can be served as its own accompaniment and none of the figures "
-      "above is altered by admitting it."),
+      "as something served beside a meal, and these form the accompaniment "
+      "pool. The pool is disjoint from the main corpus, so no dish can be "
+      "served as its own accompaniment."),
 
 ("p", "The daily energy target is divided between the three slots in the "
       "proportions 25, 35 and 40 per cent for breakfast, lunch and dinner. "
@@ -633,22 +600,15 @@ BLOCKS = [
       "the effect of alternative splits can be examined."),
 
 ("p", "A slot is therefore an energy quantity as well as a category, and the "
-      "corpus does not supply single recipes at that scale. The median dinner "
+      "corpus does not supply single recipes at that scale: the median dinner "
       "candidate provides 381 kcal per serving where the dinner slot of a "
-      "2,440 kcal day asks for 976. A slot filled by one dish would leave "
-      "every day far short of its target whichever dishes were chosen, which "
-      "would defeat the nutritional objective outright."),
-
-("p", "A slot is consequently filled by a main dish together with the "
-      "accompaniments needed to reach its target, at most two of them, drawn "
-      "from the pool identified above. This is how the shortfall is made up "
-      "at a table, and it is preferred to the alternative of serving the main "
-      "dish several times over, which is not what a person does: told to eat "
-      "three portions of one dish, a user simply would not. The serving count "
-      "is capped at one and a half, a larger helping rather than a second "
-      "dinner. Section 4.6 reports the measurement that settled the choice "
-      "and fixed the share of the slot target the main dish is ranked "
-      "against."),
+      "2,440 kcal day asks for 976. A slot is consequently filled by a main "
+      "dish together with the accompaniments needed to reach its target, at "
+      "most two of them, drawn from the pool identified above, with the "
+      "serving count capped at one and a half, which is a larger helping "
+      "rather than a second dinner. Section 4.6 reports the measurement that settled this "
+      "choice against the alternative of repeated servings, and fixed the "
+      "share of the slot target the main dish is ranked against."),
 
 ("p", "An accompaniment is admitted only if it brings the plate closer to the "
       "target and only if it is substantial enough to be worth cooking, so a "
@@ -663,50 +623,51 @@ BLOCKS = [
 
 ("h3", "3.6.2  Plan construction"),
 
-("p", "Slots are filled greedily in day order, but a purely greedy rule has "
-      "a defect that matters here: choosing the highest-scoring breakfast "
-      "may consume so much of the day's energy allowance that no acceptable "
-      "lunch or dinner remains. A look-ahead term corrects this by "
-      "estimating, for each candidate, whether the slots remaining in that "
-      "day can still be filled within the residual energy budget, and "
-      "penalising candidates that would leave the remainder infeasible. "
-      "Algorithm 3.1 states the procedure."),
+("p", "Slots are filled greedily in day order, but a purely greedy rule has a "
+      "defect that matters here: the highest-scoring breakfast may consume "
+      "so much of the day's energy allowance that no acceptable lunch or "
+      "dinner remains. A look-ahead term corrects this, estimating for each "
+      "candidate whether the day's remaining slots can still be filled "
+      "within the residual budget and penalising those that would leave the "
+      "remainder infeasible."),
 
-("algo", "Algorithm 3.1  Weekly plan construction", [
-    "Input:  profile u, cleaned corpus R, accompaniment pool A, daily targets T",
-    "Output: plan P over 21 slots, plus any unfilled slots",
-    "",
-    " 1  P <- empty plan",
-    " 2  for each day d in Monday .. Sunday do",
-    " 3      for each slot s in (breakfast, lunch, dinner) do",
-    " 4          C <- { r in R : mealslot(r) = s }",
-    " 5          C <- HardFilter(C, u, P)       // allergens never relaxed",
-    " 6          if C is empty then",
-    " 7              record (d, s) as unfilled; continue",
-    " 8          for each r in C do",
-    " 9              base(r) <- Relevance(r, u) - SoftPenalty(r, s, d, P, wT)",
-    "10          K <- the k highest-scoring recipes in C by base",
-    "11          r* <- argmax over r in K of ( base(r) + LookAhead(r, d, s, P, T) )",
-    "12          S <- ChooseSides(r*, A, u, s, d, P, T)   // at most two",
-    "13          P <- P + (d, s, r*, S)",
-    "14  if P has unfilled slots then",
-    "15      P <- AdaptiveRelax(P, u, R, A, T)  // soft constraints only",
-    "16  return P and the list of slots still unfilled",
-]),
+("p", "The procedure works through the week one meal at a time, taking the "
+      "days from Monday and, within each day, breakfast then lunch then "
+      "dinner. At each of the twenty-one positions the candidate set is "
+      "narrowed to recipes tagged for that position, and the hard filter of "
+      "Section 3.5.1 then removes everything the user must not be offered. "
+      "That step is never skipped and never relaxed; if it empties the "
+      "candidate set, the position is recorded as unfilled rather than "
+      "filled with something inadmissible. Each survivor is scored as its "
+      "relevance to the user less the soft penalties of Section 3.5.2, whose "
+      "nutritional part is measured against the main dish's share of the "
+      "position's target rather than the whole of it, because accompaniments "
+      "supply the remainder."),
 
-("p", "Line 9 scores the main dish against w.T, its share of the slot target, "
-      "rather than against T itself, since line 12 supplies the remainder. "
-      "ChooseSides adds accompaniments one at a time, each selected against the "
-      "energy still outstanding, and stops as soon as the plate is close enough "
-      "to the target or no admissible accompaniment would improve it. The hard "
-      "filter at line 5 is applied within ChooseSides as well; it is written "
-      "once here for brevity but is not skipped there."),
+("p", "Only the fifty highest-scoring candidates go forward to the "
+      "look-ahead, which adds to each an estimate of whether the positions "
+      "still to be filled that day could be filled within the energy the "
+      "choice would leave behind. Restricting it this way keeps the cost of "
+      "each position linear in the size of the filtered candidate set, since "
+      "the expensive feasibility estimate is computed a fixed number of "
+      "times rather than once per candidate. The best candidate after that "
+      "adjustment becomes the main dish, and at most two accompaniments are "
+      "added one at a time, each chosen against the energy still outstanding "
+      "on the plate and stopping when the plate is close enough to target or "
+      "no admissible accompaniment would improve it. The same hard filter "
+      "applies to them as to the main dish."),
 
-("p", "Restricting the look-ahead to the k highest-scoring candidates keeps "
-      "the cost of each slot linear in the size of the filtered candidate "
-      "set, since the expensive feasibility estimate is evaluated only k "
-      "times. The procedure is deterministic given a profile, which matters "
-      "for the evaluation in Chapter 5."),
+("p", "Once all twenty-one positions have been attempted, any left unfilled "
+      "trigger the adaptive relaxation of Section 3.5.3, which loosens soft "
+      "constraints in a fixed order and retries; hard constraints take no "
+      "part in it. The planner returns the plan together with any positions "
+      "it could not fill, rather than silently returning a shorter week."),
+
+("p", "The procedure is deterministic given a profile: the same inputs "
+      "produce the same week every time, with no random tie-breaking "
+      "anywhere. That matters for the evaluation in Chapter 5, where a "
+      "difference between two configurations has to be attributable to the "
+      "configuration rather than to chance."),
 
 ("h3", "3.6.3  Replacing a meal"),
 
@@ -758,27 +719,24 @@ BLOCKS = [
 
 ("h3", "3.6.5  Diversity control"),
 
-("p", "A plan satisfying every constraint can still be unusable if it "
-      "repeats the same few recipes, and an accuracy-optimal ranker tends to "
-      "produce exactly that, since the recipes closest to a user's profile "
-      "resemble one another. The repetition term D of Section 3.5.2 "
-      "penalises ingredient overlap with the partial plan, a within-list "
-      "application of the topic diversification idea introduced by Ziegler "
-      "et al. [37]. The same measure, intra-list dissimilarity over "
-      "ingredient sets, is reported as an evaluation metric in Chapter 5, so "
-      "that the cost of diversity in accuracy terms is quantified rather "
-      "than assumed."),
+("p", "A plan satisfying every constraint can still be unusable if it repeats "
+      "the same few recipes, and an accuracy-optimal ranker tends to produce "
+      "exactly that, since the recipes closest to a profile resemble one "
+      "another. The repetition term D of Section 3.5.2 penalises ingredient "
+      "overlap with the partial plan, a within-list application of the topic "
+      "diversification of Ziegler et al. [50]. The same measure, intra-list "
+      "dissimilarity over ingredient sets, is reported in Chapter 5, so the "
+      "cost of diversity is quantified rather than assumed."),
 
 ("p", "How often a dish may reappear is a second question. Repetition is "
       "bounded rather than forbidden: a main dish may appear up to a stated "
-      "number of times across the seven days, two by default, while "
-      "accompaniments never repeat, so a dish that comes round twice arrives "
-      "in different company each time. The bound is exposed to the user "
-      "because how much variety a week should carry is a preference and not "
-      "a property of the corpus. An earlier version of this design barred a "
-      "recipe outright once placed, on the assumption that nobody would "
-      "regard the same dish twice in a week as a recommendation; Section 4.6 "
-      "records how that assumption was tested and withdrawn. Exposing the "
+      "number of times across the week, two by default, while accompaniments "
+      "never repeat, so a dish that comes round twice arrives in different "
+      "company. The bound is exposed to the user because how much variety a "
+      "week should carry is a preference, not a property of the corpus. An "
+      "earlier version barred a recipe outright once placed, assuming nobody "
+      "would regard the same dish twice in a week as a recommendation; "
+      "Section 4.6 records how that was tested and withdrawn. Exposing the "
       "bound has a second use: it is the parameter along which the accuracy "
       "cost of diversity is measured in Chapter 5, so the trade-off this "
       "section describes is instrumented by the same control the user "
@@ -801,7 +759,8 @@ BLOCKS = [
 
 ("h3", "3.7.2  Interface design"),
 
-("p", "The interface is a single page, sketched in Figure 3.6. A sidebar "
+("p", "The interface is a single page; Figure 4.1 shows it as built. A "
+      "sidebar "
       "collects the profile: body data and activity level, the two "
       "preparation-time budgets, and the restriction controls. The main pane "
       "presents the week at two scales, because one layout cannot serve both "
@@ -812,42 +771,38 @@ BLOCKS = [
       "open."),
 
 ("p", "A card is the unit the user acts on. Each carries the meal slot, the "
-      "main dish, the accompaniments served beside it, the total for the "
-      "plate, the preparation time, any allergen class flagged anywhere on "
-      "the plate rather than on the main dish alone, the complete ingredient "
-      "list of every dish, and a control that replaces the recipe under the "
-      "rules of Section 3.6.3. What a card cannot show is a photograph, "
-      "because the corpus contains no images: a real limitation for an "
-      "interface whose subject is food, and the reason a card leads with the "
-      "recipe name and the figures a user judges a meal by rather than with "
-      "a visual element it cannot fill. Beneath the week the interface sets "
-      "each day's totals against the targets derived in Section 3.3.2, so "
-      "that the nutritional attainment measured in Chapter 5 is visible to "
-      "the user rather than confined to the evaluation."),
+      "main dish, its accompaniments, the total for the plate, the "
+      "preparation time, any allergen class flagged anywhere on the plate "
+      "rather than on the main dish alone, the full ingredient list of every "
+      "dish, and a control that replaces the recipe under the rules of "
+      "Section 3.6.3. What a card cannot show is a photograph, because the "
+      "corpus holds no images: a real limitation for an interface whose "
+      "subject is food, and the reason a card leads with the name and the "
+      "figures a user judges a meal by. Beneath the week, each day's totals "
+      "are set against the targets of Section 3.3.2, so the nutritional "
+      "attainment measured in Chapter 5 is visible to the user rather than "
+      "confined to the evaluation."),
 
-("p", "Two features follow directly from the limits established in Section "
-      "3.2.4. Ingredient lists are expanded by default rather than hidden "
-      "behind a control, so that a user with an allergy can check without "
-      "additional interaction; and a persistent notice states that screening "
-      "is automated and is not a safety guarantee. The wording describes what "
-      "the system actually does: it screens, and screening has a "
-      "false-negative rate that Chapter 5 quantifies. Presenting the output "
-      "as a guarantee would misrepresent the method and encourage exactly the "
-      "unwarranted reliance the fail-closed filter exists to make "
-      "unnecessary, and would contradict the ethical position of Section 1.4 "
-      "that the system offers suggestions and not clinical advice."),
+("p", "Three features follow from the limits established in Section 3.2.4. "
+      "Ingredient lists are expanded by default rather than hidden behind a "
+      "control, so a user with an allergy can check without further "
+      "interaction. A persistent notice states that screening is automated "
+      "and is not a safety guarantee, which describes what the system does: "
+      "it screens, and screening has a false-negative rate that Chapter 5 "
+      "quantifies. Presenting that as a guarantee would misrepresent the "
+      "method and encourage the reliance the fail-closed filter exists to "
+      "make unnecessary."),
 
-("p", "A third feature follows from the same commitment and is less obvious. "
-      "A plan is built when the user asks for one, so a restriction edited in "
-      "the sidebar does not by itself change what is on screen. For a "
-      "preference that is merely stale; for a restriction it is unsafe, "
-      "because the user has just declared an exclusion and the system appears "
-      "to have accepted it while still displaying meals chosen before it. The "
-      "interface therefore compares the sidebar against the profile the "
-      "displayed plan was built from, and where any restriction differs it "
-      "labels the plan as out of date and withholds every action until the "
-      "week is rebuilt. A screening rule that is correct but applied to a "
-      "plan the user is no longer looking at provides no protection."),
+("p", "The third is less obvious. A plan is built when the user asks for one, "
+      "so a restriction edited in the sidebar does not by itself change what "
+      "is on screen. For a preference that is merely stale; for a restriction "
+      "it is unsafe, because the user has just declared an exclusion and the "
+      "system appears to have accepted it while still displaying meals chosen "
+      "before it. The interface therefore compares the sidebar against the "
+      "profile the displayed plan was built from, and where any restriction "
+      "differs it labels the plan out of date and withholds every action "
+      "until the week is rebuilt. A screening rule applied to a plan the user "
+      "is no longer looking at provides no protection."),
 
 ("p", "Selecting a dish opens a detail view, the finest unit the interface "
       "presents, carrying the recipe's own description and method, its "
@@ -861,46 +816,8 @@ BLOCKS = [
       "presentation-layer aid, not a component of the recommender. Section "
       "4.6 describes how both properties are enforced."),
 
-("image", "fig36_cards.png", 6.1),
-("figurecaption", "Figure 3.6  The weekly plan presented as replaceable "
-                  "cards, with one card enlarged to show what it carries."),
-
-("h3", "3.7.3  Technology choices"),
-
-("p", "The prototype is written in Python 3.11 with pandas and NumPy for "
-      "data preparation, scikit-learn for the term-weighting and "
-      "decomposition components, and Streamlit for the interface. Streamlit "
-      "is chosen over a conventional web framework because it renders forms "
-      "and tabular output from ordinary Python with no separate front-end "
-      "codebase, which suits a prototype whose purpose is to support "
-      "evaluation rather than deployment. The two computationally expensive "
-      "artefacts, the term-document matrix and the latent factor matrices, "
-      "are computed once offline and loaded at start-up, so that a request "
-      "costs only a filter over the candidate set and a scoring pass. This "
-      "keeps the system within requirements N3 and N4 without specialised "
-      "hardware."),
 
 # ---------------------------------------------------------------------------
-("h2", "3.8  Summary"),
-
-("p", "This chapter has specified a system in four layers: a pipeline "
-      "reducing 231,637 raw recipes to a corpus of 128,403 with per-serving "
-      "nutrition in grams, allergen tags over the fourteen classes of "
-      "European food law and a meal slot for every recipe; a user model "
-      "converting body data into daily and per-slot targets; a switching "
-      "hybrid selecting between a content-based and a collaborative "
-      "recommender on the size of the user's history; a constraint module "
-      "filtering on hard restrictions and penalising on soft ones; and a "
-      "planner filling twenty-one slots greedily with look-ahead and "
-      "presenting them as cards the user can replace one at a time. Two "
-      "decisions run through the whole design. The first is that the corpus "
-      "determines what the recommender can do: a rating matrix 99.998 per "
-      "cent empty, with a median of one rating per user, is why the system "
-      "is content-based for most users and why a switching hybrid was chosen "
-      "at all. The second is that allergen screening errs towards exclusion, "
-      "never relaxes, and is not presented as a safety guarantee, because "
-      "rule-based tagging of user-generated ingredient text has a "
-      "false-negative rate that cannot be driven to zero."),
 ]
 
 # ---------------------------------------------------------------------------
@@ -909,38 +826,38 @@ BLOCKS = [
 # before being written into the text.
 # ---------------------------------------------------------------------------
 NEW_REFERENCES = [
-    (28, "Majumder, B.P., Li, S., Ni, J. and McAuley, J. 2019. Generating "
+    (41, "Majumder, B.P., Li, S., Ni, J. and McAuley, J. 2019. Generating "
          "Personalized Recipes from Historical User Preferences. In: "
          "Proceedings of the 2019 Conference on Empirical Methods in Natural "
          "Language Processing and the 9th International Joint Conference on "
          "Natural Language Processing (EMNLP-IJCNLP). Hong Kong: Association "
          "for Computational Linguistics, pp.5976-5982."),
-    (29, "US Food and Drug Administration. Nutrition labeling of food. Code "
+    (42, "US Food and Drug Administration. Nutrition labeling of food. Code "
          "of Federal Regulations, Title 21, Part 101, Section 101.9. "
          "Washington, DC: Office of the Federal Register."),
-    (30, "European Parliament and Council of the European Union. 2011. "
+    (43, "European Parliament and Council of the European Union. 2011. "
          "Regulation (EU) No 1169/2011 on the provision of food information "
          "to consumers, Annex II. Official Journal of the European Union, "
          "L304, pp.18-63."),
-    (31, "Mifflin, M.D., St Jeor, S.T., Hill, L.A., Scott, B.J., Daugherty, "
+    (44, "Mifflin, M.D., St Jeor, S.T., Hill, L.A., Scott, B.J., Daugherty, "
          "S.A. and Koh, Y.O. 1990. A new predictive equation for resting "
          "energy expenditure in healthy individuals. The American Journal of "
          "Clinical Nutrition, 51(2), pp.241-247."),
-    (32, "Scientific Advisory Committee on Nutrition. 2011. Dietary "
+    (45, "Scientific Advisory Committee on Nutrition. 2011. Dietary "
          "Reference Values for Energy. London: The Stationery Office."),
-    (33, "Public Health England. 2016. Government Dietary Recommendations: "
+    (46, "Public Health England. 2016. Government Dietary Recommendations: "
          "Government recommendations for energy and nutrients for males and "
          "females aged 1-18 years and 19+ years. London: Public Health "
          "England."),
-    (34, "Salton, G. and Buckley, C. 1988. Term-weighting approaches in "
+    (47, "Salton, G. and Buckley, C. 1988. Term-weighting approaches in "
          "automatic text retrieval. Information Processing & Management, "
          "24(5), pp.513-523."),
-    (35, "Koren, Y., Bell, R. and Volinsky, C. 2009. Matrix factorization "
+    (48, "Koren, Y., Bell, R. and Volinsky, C. 2009. Matrix factorization "
          "techniques for recommender systems. Computer, 42(8), pp.30-37."),
-    (36, "Burke, R. 2002. Hybrid recommender systems: survey and "
+    (49, "Burke, R. 2002. Hybrid recommender systems: survey and "
          "experiments. User Modeling and User-Adapted Interaction, 12(4), "
          "pp.331-370."),
-    (37, "Ziegler, C.-N., McNee, S.M., Konstan, J.A. and Lausen, G. 2005. "
+    (50, "Ziegler, C.-N., McNee, S.M., Konstan, J.A. and Lausen, G. 2005. "
          "Improving recommendation lists through topic diversification. In: "
          "Proceedings of the 14th International Conference on World Wide Web "
          "(WWW '05). New York: ACM, pp.22-32."),
@@ -964,9 +881,10 @@ CH2_CAPTION_FIXES = [
 
 # (unique text fragment to locate the paragraph, sentence to append)
 CH2_CROSSREF_FIXES = [
+    # The supervisor struck "and marks those combined in this project" on
+    # 20 August 2026: the caption of Figure 2.1 already says it.
     ("Recipe recommendation has matured from a sub-task",
-     " Figure 2.1 sets out the resulting taxonomy of approaches and marks "
-     "those combined in this project."),
+     " Figure 2.1 sets out the resulting taxonomy of approaches."),
     ("Two features distinguish recipe recommendation from canonical product",
      " Representative systems from each method family are summarised in "
      "Table 2.1."),
